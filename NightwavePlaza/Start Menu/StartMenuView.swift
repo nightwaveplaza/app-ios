@@ -6,6 +6,7 @@
 //  Copyright © 2020 Aleksey Garbarev. All rights reserved.
 //
 
+import UIKit
 import Foundation
 
 class StartMenuView: UIView {
