@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FA2F9CF6C900DB1D6B /* APIClient.swift */; };
+		114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FC2F9CF73900DB1D6B /* Status.swift */; };
+		114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FE2F9CF76900DB1D6B /* Song.swift */; };
+		114CF40D2F9CFAA600DB1D6B /* AppPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF40A2F9CFAA600DB1D6B /* AppPreference.swift */; };
+		114CF40E2F9CFAA600DB1D6B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF40B2F9CFAA600DB1D6B /* Settings.swift */; };
 		11A4014B2F9CEE9900DC5BC2 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014A2F9CEE9900DC5BC2 /* RxCocoa */; };
 		11A4014D2F9CEE9900DC5BC2 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014C2F9CEE9900DC5BC2 /* RxSwift */; };
 		11A401502F9CEF1100DC5BC2 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014F2F9CEF1100DC5BC2 /* RxDataSources */; };
 		11A401532F9CEF3200DC5BC2 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 11A401522F9CEF3200DC5BC2 /* Reachability */; };
-		933DA3AF9F6C2A968A6B5170 /* RequestToGetStatus.response.json in Resources */ = {isa = PBXBuildFile; fileRef = 9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */; };
-		FA0605D0250E463D001C3C46 /* LastFmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0605CF250E463D001C3C46 /* LastFmService.swift */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD5C2479B55F00C58CFE /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD5B2479B55F00C58CFE /* MainViewController.swift */; };
 		FA0FFD5F2479B55F00C58CFE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD5D2479B55F00C58CFE /* Main.storyboard */; };
@@ -20,15 +23,9 @@
 		FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD622479B56100C58CFE /* LaunchScreen.storyboard */; };
 		FA0FFD6F2479B56100C58CFE /* NightwavePlazaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD6E2479B56100C58CFE /* NightwavePlazaTests.swift */; };
 		FA22BD652518033400D204D5 /* ObservableWithPrevious.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA22BD642518033400D204D5 /* ObservableWithPrevious.swift */; };
-		FA22BD682518089000D204D5 /* RequestToScrobble.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA22BD672518089000D204D5 /* RequestToScrobble.swift */; };
-		FA22BD6A2518089C00D204D5 /* RequestToNowPlaying.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA22BD692518089C00D204D5 /* RequestToNowPlaying.swift */; };
 		FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D1DAB24E8873F00EE0556 /* WebBridgeService.swift */; };
 		FA7069BB247A69D700AFBD61 /* gena.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA7069BA247A69D700AFBD61 /* gena.plist */; };
-		FA7069BD247A6A0C00AFBD61 /* RequestToGetStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7069BC247A6A0C00AFBD61 /* RequestToGetStatus.swift */; };
-		FA7069C5247A6E8600AFBD61 /* RestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7069C4247A6E8600AFBD61 /* RestClient.swift */; };
-		FA7069C8247A6FD900AFBD61 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7069C7247A6FD900AFBD61 /* Status.swift */; };
 		FA75265625052E8B00C649BC /* BackgroundCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */; };
-		FA75265925052ECB00C649BC /* RequestToDownloadFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265825052ECB00C649BC /* RequestToDownloadFile.swift */; };
 		FA75265B25055C6000C649BC /* SleepTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265A25055C6000C649BC /* SleepTimerService.swift */; };
 		FA75265F25056D4800C649BC /* EasyTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265D25056D4800C649BC /* EasyTipView.swift */; };
 		FA75266025056D4800C649BC /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265E25056D4800C649BC /* UIKitExtensions.swift */; };
@@ -38,18 +35,12 @@
 		FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E1772504F8920026C008 /* StartMenuView.swift */; };
 		FAB2E17D2504FDC80026C008 /* UIColor+hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E17C2504FDC80026C008 /* UIColor+hex.swift */; };
 		FAB2E17F25050B8C0026C008 /* StartMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E17E25050B8C0026C008 /* StartMenuHeaderView.swift */; };
-		FAB2E181250514650026C008 /* AuthStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E180250514650026C008 /* AuthStorage.swift */; };
 		FAC43AA224D6AB300073341F /* Web.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43AA124D6AB300073341F /* Web.storyboard */; };
 		FAC43AA424D6AB520073341F /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43AA324D6AB520073341F /* WebViewController.swift */; };
 		FAC43AA624D6AD940073341F /* web in Resources */ = {isa = PBXBuildFile; fileRef = FAC43AA524D6AD940073341F /* web */; };
 		FACEC4B824E852AB00265659 /* WebMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FACEC4B724E852AB00265659 /* WebMessage.swift */; };
-		FAE41EFB247A85E40076D927 /* StatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41EFA247A85E40076D927 /* StatusService.swift */; };
-		FAE41EFD247A8B7C0076D927 /* RequestToGetImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41EFC247A8B7C0076D927 /* RequestToGetImage.swift */; };
-		FAE41EFF247AA47B0076D927 /* MetadataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41EFE247AA47B0076D927 /* MetadataService.swift */; };
 		FAE41F01247AA4A10076D927 /* PlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41F00247AA4A10076D927 /* PlaybackService.swift */; };
-		FAE41F03247ABD860076D927 /* UpdateScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41F02247ABD860076D927 /* UpdateScheduler.swift */; };
 		FAE41F05247ACFA90076D927 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41F04247ACFA90076D927 /* BackgroundView.swift */; };
-		FAE41F08247ADA570076D927 /* RequestToGetBackgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41F07247ADA570076D927 /* RequestToGetBackgrounds.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,8 +54,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = RequestToGetStatus.response.json; sourceTree = "<group>"; };
-		FA0605CF250E463D001C3C46 /* LastFmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFmService.swift; sourceTree = "<group>"; };
+		114CF3FA2F9CF6C900DB1D6B /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		114CF3FC2F9CF73900DB1D6B /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		114CF3FE2F9CF76900DB1D6B /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		114CF40A2F9CFAA600DB1D6B /* AppPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreference.swift; sourceTree = "<group>"; };
+		114CF40B2F9CFAA600DB1D6B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nightwave Plaza.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA0FFD572479B55F00C58CFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA0FFD5B2479B55F00C58CFE /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -76,17 +70,11 @@
 		FA0FFD6E2479B56100C58CFE /* NightwavePlazaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightwavePlazaTests.swift; sourceTree = "<group>"; };
 		FA0FFD702479B56100C58CFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA22BD642518033400D204D5 /* ObservableWithPrevious.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableWithPrevious.swift; sourceTree = "<group>"; };
-		FA22BD672518089000D204D5 /* RequestToScrobble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToScrobble.swift; sourceTree = "<group>"; };
-		FA22BD692518089C00D204D5 /* RequestToNowPlaying.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToNowPlaying.swift; sourceTree = "<group>"; };
 		FA2D1DAB24E8873F00EE0556 /* WebBridgeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebBridgeService.swift; sourceTree = "<group>"; };
 		FA6E52F4251FCADA00622119 /* Nightwave Plaza.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Nightwave Plaza.entitlements"; sourceTree = "<group>"; };
 		FA7069BA247A69D700AFBD61 /* gena.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = gena.plist; sourceTree = SOURCE_ROOT; };
-		FA7069BC247A6A0C00AFBD61 /* RequestToGetStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToGetStatus.swift; sourceTree = "<group>"; };
 		FA7069BE247A6ABB00AFBD61 /* NightwavePlaza-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NightwavePlaza-Bridging-Header.h"; sourceTree = "<group>"; };
-		FA7069C4247A6E8600AFBD61 /* RestClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClient.swift; sourceTree = "<group>"; };
-		FA7069C7247A6FD900AFBD61 /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundCacheManager.swift; sourceTree = "<group>"; };
-		FA75265825052ECB00C649BC /* RequestToDownloadFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToDownloadFile.swift; sourceTree = "<group>"; };
 		FA75265A25055C6000C649BC /* SleepTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerService.swift; sourceTree = "<group>"; };
 		FA75265D25056D4800C649BC /* EasyTipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EasyTipView.swift; sourceTree = "<group>"; };
 		FA75265E25056D4800C649BC /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
@@ -96,18 +84,12 @@
 		FAB2E1772504F8920026C008 /* StartMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuView.swift; sourceTree = "<group>"; };
 		FAB2E17C2504FDC80026C008 /* UIColor+hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+hex.swift"; sourceTree = "<group>"; };
 		FAB2E17E25050B8C0026C008 /* StartMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuHeaderView.swift; sourceTree = "<group>"; };
-		FAB2E180250514650026C008 /* AuthStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStorage.swift; sourceTree = "<group>"; };
 		FAC43AA124D6AB300073341F /* Web.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Web.storyboard; sourceTree = "<group>"; };
 		FAC43AA324D6AB520073341F /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		FAC43AA524D6AD940073341F /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = web; sourceTree = "<group>"; };
 		FACEC4B724E852AB00265659 /* WebMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebMessage.swift; sourceTree = "<group>"; };
-		FAE41EFA247A85E40076D927 /* StatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusService.swift; sourceTree = "<group>"; };
-		FAE41EFC247A8B7C0076D927 /* RequestToGetImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToGetImage.swift; sourceTree = "<group>"; };
-		FAE41EFE247AA47B0076D927 /* MetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataService.swift; sourceTree = "<group>"; };
 		FAE41F00247AA4A10076D927 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackService.swift; sourceTree = "<group>"; };
-		FAE41F02247ABD860076D927 /* UpdateScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateScheduler.swift; sourceTree = "<group>"; };
 		FAE41F04247ACFA90076D927 /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
-		FAE41F07247ADA570076D927 /* RequestToGetBackgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestToGetBackgrounds.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,33 +114,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		41BB05B60EB7A4E7A1B6E2B9 /* GetStatus */ = {
+		114CF40C2F9CFAA600DB1D6B /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				FA7069BC247A6A0C00AFBD61 /* RequestToGetStatus.swift */,
-				9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */,
+				114CF40A2F9CFAA600DB1D6B /* AppPreference.swift */,
+				114CF40B2F9CFAA600DB1D6B /* Settings.swift */,
 			);
-			path = GetStatus;
-			sourceTree = "<group>";
-		};
-		5D54ECC8A2676C6166ED0D43 /* Requests */ = {
-			isa = PBXGroup;
-			children = (
-				FA22BD662518087B00D204D5 /* LastFm */,
-				FA75265725052EC000C649BC /* Download File */,
-				FAE41F06247ADA440076D927 /* GetBackgrounds */,
-				41BB05B60EB7A4E7A1B6E2B9 /* GetStatus */,
-				6B5E558DAB7568F6698AB50C /* GetImage */,
-			);
-			path = Requests;
-			sourceTree = "<group>";
-		};
-		6B5E558DAB7568F6698AB50C /* GetImage */ = {
-			isa = PBXGroup;
-			children = (
-				FAE41EFC247A8B7C0076D927 /* RequestToGetImage.swift */,
-			);
-			path = GetImage;
+			path = Preferences;
 			sourceTree = "<group>";
 		};
 		B2348EC994803B27A77EBFB5 /* Network */ = {
@@ -166,7 +128,6 @@
 			children = (
 				FA7069C6247A6FC500AFBD61 /* Models */,
 				FA7069C3247A6AEA00AFBD61 /* Client */,
-				5D54ECC8A2676C6166ED0D43 /* Requests */,
 				FA7069BE247A6ABB00AFBD61 /* NightwavePlaza-Bridging-Header.h */,
 			);
 			path = Network;
@@ -194,6 +155,7 @@
 		FA0FFD562479B55F00C58CFE /* NightwavePlaza */ = {
 			isa = PBXGroup;
 			children = (
+				114CF40C2F9CFAA600DB1D6B /* Preferences */,
 				FA6E52F4251FCADA00622119 /* Nightwave Plaza.entitlements */,
 				FA75265C25056D4800C649BC /* Tooltip */,
 				FAB2E1792504FDAF0026C008 /* Utils */,
@@ -223,19 +185,10 @@
 			path = NightwavePlazaTests;
 			sourceTree = "<group>";
 		};
-		FA22BD662518087B00D204D5 /* LastFm */ = {
-			isa = PBXGroup;
-			children = (
-				FA22BD672518089000D204D5 /* RequestToScrobble.swift */,
-				FA22BD692518089C00D204D5 /* RequestToNowPlaying.swift */,
-			);
-			path = LastFm;
-			sourceTree = "<group>";
-		};
 		FA7069C3247A6AEA00AFBD61 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				FA7069C4247A6E8600AFBD61 /* RestClient.swift */,
+				114CF3FA2F9CF6C900DB1D6B /* APIClient.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -243,18 +196,11 @@
 		FA7069C6247A6FC500AFBD61 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				FA7069C7247A6FD900AFBD61 /* Status.swift */,
+				114CF3FE2F9CF76900DB1D6B /* Song.swift */,
+				114CF3FC2F9CF73900DB1D6B /* Status.swift */,
 				FACEC4B724E852AB00265659 /* WebMessage.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		FA75265725052EC000C649BC /* Download File */ = {
-			isa = PBXGroup;
-			children = (
-				FA75265825052ECB00C649BC /* RequestToDownloadFile.swift */,
-			);
-			path = "Download File";
 			sourceTree = "<group>";
 		};
 		FA75265C25056D4800C649BC /* Tooltip */ = {
@@ -289,34 +235,13 @@
 		FAE41EF8247A85B90076D927 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				FAE41EF9247A85C60076D927 /* StatusService */,
-				FAE41EFE247AA47B0076D927 /* MetadataService.swift */,
 				FAE41F00247AA4A10076D927 /* PlaybackService.swift */,
 				FA9A397C24D6C3CD00E6EF38 /* WebMessageBusService.swift */,
 				FA2D1DAB24E8873F00EE0556 /* WebBridgeService.swift */,
-				FAB2E180250514650026C008 /* AuthStorage.swift */,
 				FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */,
 				FA75265A25055C6000C649BC /* SleepTimerService.swift */,
-				FA0605CF250E463D001C3C46 /* LastFmService.swift */,
 			);
 			path = Services;
-			sourceTree = "<group>";
-		};
-		FAE41EF9247A85C60076D927 /* StatusService */ = {
-			isa = PBXGroup;
-			children = (
-				FAE41EFA247A85E40076D927 /* StatusService.swift */,
-				FAE41F02247ABD860076D927 /* UpdateScheduler.swift */,
-			);
-			path = StatusService;
-			sourceTree = "<group>";
-		};
-		FAE41F06247ADA440076D927 /* GetBackgrounds */ = {
-			isa = PBXGroup;
-			children = (
-				FAE41F07247ADA570076D927 /* RequestToGetBackgrounds.swift */,
-			);
-			path = GetBackgrounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -423,7 +348,6 @@
 				FAC43AA624D6AD940073341F /* web in Resources */,
 				FA7069BB247A69D700AFBD61 /* gena.plist in Resources */,
 				FA0FFD5F2479B55F00C58CFE /* Main.storyboard in Resources */,
-				933DA3AF9F6C2A968A6B5170 /* RequestToGetStatus.response.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,37 +365,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FAE41F03247ABD860076D927 /* UpdateScheduler.swift in Sources */,
-				FA7069C5247A6E8600AFBD61 /* RestClient.swift in Sources */,
 				FAE41F05247ACFA90076D927 /* BackgroundView.swift in Sources */,
 				FA75265625052E8B00C649BC /* BackgroundCacheManager.swift in Sources */,
 				FA9A397D24D6C3CD00E6EF38 /* WebMessageBusService.swift in Sources */,
+				114CF40D2F9CFAA600DB1D6B /* AppPreference.swift in Sources */,
+				114CF40E2F9CFAA600DB1D6B /* Settings.swift in Sources */,
+				114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */,
 				FAB2E1742504F7620026C008 /* StartMenuHandler.swift in Sources */,
-				FAE41F08247ADA570076D927 /* RequestToGetBackgrounds.swift in Sources */,
 				FA22BD652518033400D204D5 /* ObservableWithPrevious.swift in Sources */,
-				FAE41EFD247A8B7C0076D927 /* RequestToGetImage.swift in Sources */,
-				FAB2E181250514650026C008 /* AuthStorage.swift in Sources */,
-				FAE41EFF247AA47B0076D927 /* MetadataService.swift in Sources */,
-				FA75265925052ECB00C649BC /* RequestToDownloadFile.swift in Sources */,
+				114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */,
 				FAB2E1762504F8840026C008 /* StartMenuItem.swift in Sources */,
 				FAE41F01247AA4A10076D927 /* PlaybackService.swift in Sources */,
-				FA22BD682518089000D204D5 /* RequestToScrobble.swift in Sources */,
 				FAB2E17F25050B8C0026C008 /* StartMenuHeaderView.swift in Sources */,
-				FA7069C8247A6FD900AFBD61 /* Status.swift in Sources */,
 				FA0FFD5C2479B55F00C58CFE /* MainViewController.swift in Sources */,
 				FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */,
 				FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */,
 				FA75265B25055C6000C649BC /* SleepTimerService.swift in Sources */,
-				FA22BD6A2518089C00D204D5 /* RequestToNowPlaying.swift in Sources */,
 				FACEC4B824E852AB00265659 /* WebMessage.swift in Sources */,
 				FA75266025056D4800C649BC /* UIKitExtensions.swift in Sources */,
-				FA7069BD247A6A0C00AFBD61 /* RequestToGetStatus.swift in Sources */,
-				FA0605D0250E463D001C3C46 /* LastFmService.swift in Sources */,
 				FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */,
+				114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */,
 				FAB2E17D2504FDC80026C008 /* UIColor+hex.swift in Sources */,
 				FAC43AA424D6AB520073341F /* WebViewController.swift in Sources */,
 				FA75265F25056D4800C649BC /* EasyTipView.swift in Sources */,
-				FAE41EFB247A85E40076D927 /* StatusService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

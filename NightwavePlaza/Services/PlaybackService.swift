@@ -12,31 +12,13 @@ import MediaPlayer
 import RxSwift
 import RxCocoa
 import Reachability
-import BugfenderSDK
 
 enum PlaybackQuality: Int {
     case High = 0
     case Eco = 1
 }
 
-class PlaybackService {
-    
-    var qualityStorage = CCUserDefaultsStorage(with: NSNumber.self, key: "quality")
-    
-    var quality: PlaybackQuality {
-        set {
-            qualityStorage?.save(NSNumber(integerLiteral: newValue.rawValue))
-            self.replacePlayerForQuality()
-        }
-        get {
-            if let storedQuality = qualityStorage?.getObject() as? NSNumber, let quality = PlaybackQuality.init(rawValue: storedQuality.intValue) {
-                return quality;
-            } else {
-                return .High
-            }
-        }
-    }
-    
+class PlaybackService {    
     var playbackRate$ = BehaviorSubject<Float>(value: 0)
     
     var player = AVPlayer(url: URL(string: "https://radio.plaza.one/mp3")!)
@@ -65,7 +47,7 @@ class PlaybackService {
         do {
             try reachability.startNotifier()
         } catch {
-            Bugfender.error("Unable to start Reachability Notifier")
+            // TODO
         }
         
     }
@@ -101,7 +83,7 @@ class PlaybackService {
     }
     
     private func urlForQuality() -> URL {
-        self.quality == .High ? URL(string: "https://radio.plaza.one/mp3")! : URL(string: "https://radio.plaza.one/mp3_low")!
+        Settings.lowQualityAudio ? URL(string: "https://radio.plaza.one/mp3_low")! : URL(string: "https://radio.plaza.one/mp3")!
     }
     
     @objc private func handleInterruption(notification: NSNotification) {
@@ -126,8 +108,6 @@ class PlaybackService {
                 print("Should NOT resume a playback")
                 // Interruption ended. Playback should not resume.
             }
-        @unknown default:
-            Bugfender.warning("New interruption type is unhandled: \(interruptionType)")
         }
         
     }

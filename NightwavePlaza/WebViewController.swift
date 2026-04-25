@@ -8,7 +8,6 @@
 
 import Foundation
 import WebKit
-import PureLayout
 import RxCocoa
 import RxSwift
 import SafariServices
@@ -18,13 +17,9 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     let backgroundView = BackgroundView()
     let webView = WKWebView()
     
-    let lastFmService: LastFmService
-    
     private var disposeBag = DisposeBag()
     
-    private let statusService = StatusService()
     private let playback: PlaybackService
-    private let metadata: MetadataService
 
     
     private let webBridge = WebBridgeService()
@@ -50,15 +45,11 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.playback = PlaybackService();
-        self.metadata = MetadataService(playback: playback)
-        self.lastFmService = LastFmService(playback: self.playback, status: self.statusService)
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     required init?(coder: NSCoder) {
         self.playback = PlaybackService();
-        self.metadata = MetadataService(playback: playback)
-        self.lastFmService = LastFmService(playback: self.playback, status: self.statusService)
         super.init(coder: coder)
     }
     
@@ -70,7 +61,6 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         self.webBridge.setup(webView: self.webView, statusService: self.statusService, playback: self.playback, metadata: self.metadata, viewController: self);
         
         self.setupWebView()
-        self.setupTimer()
     }
     
     
@@ -81,38 +71,30 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         webView.backgroundColor = .clear
         webView.scrollView.isScrollEnabled = false
         
-        var resourcesPath: NSString
+//        var resourcesPath: NSString
+//        
+//        #if targetEnvironment(macCatalyst)
+//        resourcesPath = Bundle.main.resourcePath! as NSString
+//        #else
+//        resourcesPath = Bundle.main.bundlePath as NSString
+//        #endif
+//
+//        let webPath = resourcesPath.appendingPathComponent("web");
+//        let indexPath = (webPath as NSString).appendingPathComponent("index.html");
+//        
+//        let indexContent = try! NSString(contentsOfFile: indexPath, encoding: String.Encoding.utf8.rawValue);
+// 
+//        webView.loadHTMLString(indexContent as String, baseURL: URL(fileURLWithPath: webPath));
+//        webView.navigationDelegate = self
         
-        #if targetEnvironment(macCatalyst)
-        resourcesPath = Bundle.main.resourcePath! as NSString
-        #else
-        resourcesPath = Bundle.main.bundlePath as NSString
-        #endif
-
-        let webPath = resourcesPath.appendingPathComponent("web");
-        let indexPath = (webPath as NSString).appendingPathComponent("index.html");
-        
-        let indexContent = try! NSString(contentsOfFile: indexPath, encoding: String.Encoding.utf8.rawValue);
- 
-        webView.loadHTMLString(indexContent as String, baseURL: URL(fileURLWithPath: webPath));
-        webView.navigationDelegate = self
-        
-        
-    }
-    
-    
-    private func setupTimer() {
-        self.timer = Timer(fire: Date(), interval: 1, repeats: true, block: { [weak self] (timer) in
-            do {
-                let status = try self?.statusService.status$.value()
-                if let status = status {
-                    self?.metadata.setMetadata(status: status, isPlaying: self?.playback.paused == false)
-                }
-            } catch { }
-        })
-        if let timer = self.timer {
-            RunLoop.current.add(timer, forMode: .default);
-        }
+        guard let url = URL(string: "http://plaza.local:4173") else {
+                print("Invalid URL")
+                return
+            }
+        let request = URLRequest(url: url)
+            webView.load(request)
+            
+            webView.navigationDelegate = self
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

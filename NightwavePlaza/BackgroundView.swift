@@ -6,6 +6,7 @@
 //  Copyright © 2020 Aleksey Garbarev. All rights reserved.
 //
 
+import UIKit
 import Foundation
 import AVFoundation
 import RxSwift
@@ -14,7 +15,7 @@ class BackgroundView: UIView {
     
     private var player = AVPlayer()
     private var playerLayer = AVPlayerLayer()
-    private var solidColor = UIColor(hex: "008B8B")
+    private var solidColor = UIColor(named: "008B8B")
     
     private var cache = BackgroundCacheManager.shared;
     

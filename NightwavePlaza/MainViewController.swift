@@ -29,19 +29,15 @@ class MainViewController: UIViewController {
     private var currentBg: Int = 0
     private var backgrounds: [[String: String]] = []
     
-    private let statusService = StatusService()
     private let playback: PlaybackService
-    private let metadata: MetadataService
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.playback = PlaybackService();
-        self.metadata = MetadataService(playback: playback)
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     required init?(coder: NSCoder) {
         self.playback = PlaybackService();
-        self.metadata = MetadataService(playback: playback)
         super.init(coder: coder)
     }
     
@@ -50,21 +46,11 @@ class MainViewController: UIViewController {
         
         self.setupTimer()
         self.bindStatusToUI()
-        self.commonInit()
     }
     
     @IBAction func onTriggerPlayButton(_ sender: Any) {
 //        self.playback.toggle()
         self.controlButton.setTitle(self.playback.paused ? "Play" : "Pause", for: .normal)
-    }
-    
-    func commonInit() {
-        RestClient.shared.restClient.send(RequestToGetBackgrounds()) {[unowned self] (result, error) in
-            if let bg = result as? [[String: String]] {
-                self.backgrounds = bg
-                self.updateBg()
-            }
-        }
     }
     
     private func updateBg() {
@@ -77,59 +63,6 @@ class MainViewController: UIViewController {
         
         self.prevBgButton.isEnabled = self.currentBg > 0;
         self.nextBgButton.isEnabled = self.currentBg < self.backgrounds.count - 1
-    }
-    
-    
-    var timer: Timer?
-    
-    private func setupTimer() {
-        self.timer = Timer(fire: Date(), interval: 1, repeats: true, block: { [weak self] (timer) in
-            do {
-                let status = try self?.statusService.status$.value()
-                if let status = status {
-                    self?.metadata.setMetadata(status: status, isPlaying: self?.playback.paused == false)
-                    self?.updateDurationLabel(status: status)
-                }
-            } catch { }
-        })
-        if let timer = self.timer {
-            RunLoop.current.add(timer, forMode: .default);
-        }
-    }
-    
-    func bindStatusToUI() {
-        statusService.status$.distinctUntilChanged().subscribe { [weak self] (event) in
-            if let status = event.element as? Status {
-                self?.artistLabel.text = status.song.artist
-                self?.songLabel.text = status.song.title
-                self?.artImageView.image = status.image;
-                self?.metadata.setMetadata(status: status, isPlaying: self?.playback.paused == false)
-                self?.updateDurationLabel(status: status)
-            }
-            
-        }.disposed(by: disposeBag)
-    }
-    
-    func updateDurationLabel(status: Status) {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .positional
-        formatter.allowedUnits = [ .minute, .second ]
-        formatter.zeroFormattingBehavior = [ .pad ]
-        
-        let currTimeString = formatter.string(from: status.getPosition())!
-        let lengthTimeString = formatter.string(from: Double(status.song.length))!
-        self.durationLabel.text = "\(currTimeString) / \(lengthTimeString)"
-    }
-    
-    
-    @IBAction func prevBackground(_ sender: Any) {
-        self.currentBg -= 1;
-        self.updateBg()
-    }
-
-    @IBAction func nextBackground(_ sender: Any) {
-        self.currentBg += 1;
-        self.updateBg()
     }
 }
 

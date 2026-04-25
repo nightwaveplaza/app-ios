@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import PureLayout
-import GestureRecognizerClosures
 
 class StartMenuView: UIView {
     

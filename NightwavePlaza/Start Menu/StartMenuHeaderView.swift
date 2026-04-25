@@ -5,7 +5,7 @@
 //  Created by Aleksey Garbarev on 06.09.2020.
 //  Copyright © 2020 Aleksey Garbarev. All rights reserved.
 //
-
+import UIKit
 import Foundation
 
 class StartMenuHeaderView: UIView {
@@ -57,7 +57,7 @@ class StartMenuHeaderView: UIView {
     
     func setupGradient() {
         let colorTop = UIColor.black.cgColor
-        let colorBottom = UIColor(hex: "0c00f0")!.cgColor
+        let colorBottom = UIColor(named: "0c00f0")!.cgColor
 
         self.gradientLayer = CAGradientLayer()
         self.gradientLayer.colors = [colorTop, colorTop, colorBottom]

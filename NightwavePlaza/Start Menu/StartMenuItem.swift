@@ -5,7 +5,7 @@
 //  Created by Aleksey Garbarev on 06.09.2020.
 //  Copyright © 2020 Aleksey Garbarev. All rights reserved.
 //
-
+import UIKit
 import Foundation
 
 struct StartMenuItem {
