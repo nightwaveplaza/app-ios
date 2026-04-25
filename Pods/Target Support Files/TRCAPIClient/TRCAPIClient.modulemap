@@ -1,6 +1,0 @@
-framework module TRCAPIClient {
-  umbrella header "TRCAPIClient-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -1,6 +1,0 @@
-framework module GestureRecognizerClosures {
-  umbrella header "GestureRecognizerClosures-umbrella.h"
-
-  export *
-  module * { export * }
-}

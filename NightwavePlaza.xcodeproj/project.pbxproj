@@ -3,13 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1423C062E6237B5ECBCD415F /* Pods_NightwavePlazaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51012A0A3FBB1E50EB8492A /* Pods_NightwavePlazaTests.framework */; };
+		11A4014B2F9CEE9900DC5BC2 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014A2F9CEE9900DC5BC2 /* RxCocoa */; };
+		11A4014D2F9CEE9900DC5BC2 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014C2F9CEE9900DC5BC2 /* RxSwift */; };
+		11A401502F9CEF1100DC5BC2 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 11A4014F2F9CEF1100DC5BC2 /* RxDataSources */; };
+		11A401532F9CEF3200DC5BC2 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 11A401522F9CEF3200DC5BC2 /* Reachability */; };
 		933DA3AF9F6C2A968A6B5170 /* RequestToGetStatus.response.json in Resources */ = {isa = PBXBuildFile; fileRef = 9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */; };
-		BEB913665039D0E3E6C53ECA /* Pods_NightwavePlaza.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4221990D687A9AC1A612E781 /* Pods_NightwavePlaza.framework */; };
 		FA0605D0250E463D001C3C46 /* LastFmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0605CF250E463D001C3C46 /* LastFmService.swift */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD5C2479B55F00C58CFE /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD5B2479B55F00C58CFE /* MainViewController.swift */; };
@@ -51,132 +53,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8453085A26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0C5A224612413F12C72A46399DC77926;
-			remoteInfo = ComponentsHub;
-		};
-		8453085C26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D51C3D0C53D23B97B032E3BDD4F82C82;
-			remoteInfo = Differentiator;
-		};
-		8453085E26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7CDA43646778C7DF1FF0FA8624D6F105;
-			remoteInfo = FastCoding;
-		};
-		8453086026403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6819C8E29E1622A130002C0C705123CD;
-			remoteInfo = GestureRecognizerClosures;
-		};
-		8453086226403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2DC3884AC03DA13FA0FF4C5F8C9A996B;
-			remoteInfo = libextobjc;
-		};
-		8453086426403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 58C13E57BC265967B1D38CB7973AC297;
-			remoteInfo = "NSString-Hash";
-		};
-		8453086626403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 30057A8CAE15800AB4D35ECA1B620AAE;
-			remoteInfo = "Pods-NightwavePlaza";
-		};
-		8453086826403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ED1270741C218946228312A515AE7B71;
-			remoteInfo = "Pods-NightwavePlazaTests";
-		};
-		8453086A26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E4E7B3DD46ABB0DBBB56BD5AE90E4911;
-			remoteInfo = PureLayout;
-		};
-		8453086C26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 21B03CA622E690725A6626C088E1D09F;
-			remoteInfo = ReachabilitySwift;
-		};
-		8453086E26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4005ABC7BB37369704B0AA352EE75B19;
-			remoteInfo = RxBiBinding;
-		};
-		8453087026403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BC432FD48A5932251F1CAFBC4BF74894;
-			remoteInfo = RxCocoa;
-		};
-		8453087226403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 692F92D73EC27270EA9CC9575C3E65B6;
-			remoteInfo = RxDataSources;
-		};
-		8453087426403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FF8B264DFE802855D5D67E7CDDABFC3C;
-			remoteInfo = RxRelay;
-		};
-		8453087626403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 809C5FAB588354C9BA37DC3EAB8CB45C;
-			remoteInfo = RxSwift;
-		};
-		8453087826403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 612028EAFF1C2054A0EB821A9C9F2440;
-			remoteInfo = SAMKeychain;
-		};
-		8453087A26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3C3FB3F02770102D2193940D54B36290;
-			remoteInfo = TRCAPIClient;
-		};
-		8453087C26403C2D00A6AA73 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C1FB7274531F0224FD58D2319600B9BF;
-			remoteInfo = TyphoonRestClient;
-		};
 		FA0FFD6B2479B56100C58CFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA0FFD4C2479B55F00C58CFE /* Project object */;
@@ -187,14 +63,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1B6A38021F3A76E454BC6BE6 /* Pods-NightwavePlaza.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NightwavePlaza.debug.xcconfig"; path = "Target Support Files/Pods-NightwavePlaza/Pods-NightwavePlaza.debug.xcconfig"; sourceTree = "<group>"; };
-		1EB634F9D2EB6896592659A6 /* Pods-NightwavePlaza.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NightwavePlaza.release.xcconfig"; path = "Target Support Files/Pods-NightwavePlaza/Pods-NightwavePlaza.release.xcconfig"; sourceTree = "<group>"; };
-		308151CC824A698EFD427DE8 /* Pods-NightwavePlazaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NightwavePlazaTests.release.xcconfig"; path = "Target Support Files/Pods-NightwavePlazaTests/Pods-NightwavePlazaTests.release.xcconfig"; sourceTree = "<group>"; };
-		4221990D687A9AC1A612E781 /* Pods_NightwavePlaza.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NightwavePlaza.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8453084426403C2C00A6AA73 /* Pods.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Pods.xcodeproj; path = Pods/Pods.xcodeproj; sourceTree = "<group>"; };
 		9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.json; path = RequestToGetStatus.response.json; sourceTree = "<group>"; };
-		A51012A0A3FBB1E50EB8492A /* Pods_NightwavePlazaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NightwavePlazaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B95CDEDCCCFCE1314198CB8F /* Pods-NightwavePlazaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NightwavePlazaTests.debug.xcconfig"; path = "Target Support Files/Pods-NightwavePlazaTests/Pods-NightwavePlazaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA0605CF250E463D001C3C46 /* LastFmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastFmService.swift; sourceTree = "<group>"; };
 		FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nightwave Plaza.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA0FFD572479B55F00C58CFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -246,7 +115,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BEB913665039D0E3E6C53ECA /* Pods_NightwavePlaza.framework in Frameworks */,
+				11A4014D2F9CEE9900DC5BC2 /* RxSwift in Frameworks */,
+				11A401502F9CEF1100DC5BC2 /* RxDataSources in Frameworks */,
+				11A401532F9CEF3200DC5BC2 /* Reachability in Frameworks */,
+				11A4014B2F9CEE9900DC5BC2 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,24 +126,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1423C062E6237B5ECBCD415F /* Pods_NightwavePlazaTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		12F7C5018E8EBF2B42FDF688 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				1B6A38021F3A76E454BC6BE6 /* Pods-NightwavePlaza.debug.xcconfig */,
-				1EB634F9D2EB6896592659A6 /* Pods-NightwavePlaza.release.xcconfig */,
-				B95CDEDCCCFCE1314198CB8F /* Pods-NightwavePlazaTests.debug.xcconfig */,
-				308151CC824A698EFD427DE8 /* Pods-NightwavePlazaTests.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		41BB05B60EB7A4E7A1B6E2B9 /* GetStatus */ = {
 			isa = PBXGroup;
 			children = (
@@ -279,16 +139,6 @@
 				9043FCADF85B8DB664F713DF /* RequestToGetStatus.response.json */,
 			);
 			path = GetStatus;
-			sourceTree = "<group>";
-		};
-		58F8DA43B83A45D4EE2EE5E3 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				8453084426403C2C00A6AA73 /* Pods.xcodeproj */,
-				4221990D687A9AC1A612E781 /* Pods_NightwavePlaza.framework */,
-				A51012A0A3FBB1E50EB8492A /* Pods_NightwavePlazaTests.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		5D54ECC8A2676C6166ED0D43 /* Requests */ = {
@@ -311,31 +161,6 @@
 			path = GetImage;
 			sourceTree = "<group>";
 		};
-		8453084526403C2C00A6AA73 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8453085B26403C2D00A6AA73 /* ComponentsHub */,
-				8453085D26403C2D00A6AA73 /* Differentiator */,
-				8453085F26403C2D00A6AA73 /* FastCoding */,
-				8453086126403C2D00A6AA73 /* GestureRecognizerClosures */,
-				8453086326403C2D00A6AA73 /* libextobjc */,
-				8453086526403C2D00A6AA73 /* NSString-Hash */,
-				8453086726403C2D00A6AA73 /* Pods-NightwavePlaza */,
-				8453086926403C2D00A6AA73 /* Pods-NightwavePlazaTests */,
-				8453086B26403C2D00A6AA73 /* PureLayout */,
-				8453086D26403C2D00A6AA73 /* ReachabilitySwift */,
-				8453086F26403C2D00A6AA73 /* RxBiBinding */,
-				8453087126403C2D00A6AA73 /* RxCocoa */,
-				8453087326403C2D00A6AA73 /* RxDataSources */,
-				8453087526403C2D00A6AA73 /* RxRelay */,
-				8453087726403C2D00A6AA73 /* RxSwift */,
-				8453087926403C2D00A6AA73 /* SAMKeychain */,
-				8453087B26403C2D00A6AA73 /* TRCAPIClient */,
-				8453087D26403C2D00A6AA73 /* TyphoonRestClient */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		B2348EC994803B27A77EBFB5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,8 +179,6 @@
 				FA0FFD562479B55F00C58CFE /* NightwavePlaza */,
 				FA0FFD6D2479B56100C58CFE /* NightwavePlazaTests */,
 				FA0FFD552479B55F00C58CFE /* Products */,
-				12F7C5018E8EBF2B42FDF688 /* Pods */,
-				58F8DA43B83A45D4EE2EE5E3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -513,11 +336,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA0FFD732479B56100C58CFE /* Build configuration list for PBXNativeTarget "NightwavePlaza" */;
 			buildPhases = (
-				3E1C49673F120BA35AA2341E /* [CP] Check Pods Manifest.lock */,
 				FA0FFD502479B55F00C58CFE /* Sources */,
 				FA0FFD512479B55F00C58CFE /* Frameworks */,
 				FA0FFD522479B55F00C58CFE /* Resources */,
-				5DF1DDDAB75F1528AE92CC31 /* [CP] Embed Pods Frameworks */,
 				F43FEBE5E46363347EC38A4E /* Headers */,
 			);
 			buildRules = (
@@ -533,7 +354,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA0FFD762479B56100C58CFE /* Build configuration list for PBXNativeTarget "NightwavePlazaTests" */;
 			buildPhases = (
-				C27BDAEAD401A3974FD21C5E /* [CP] Check Pods Manifest.lock */,
 				FA0FFD662479B56100C58CFE /* Sources */,
 				FA0FFD672479B56100C58CFE /* Frameworks */,
 				FA0FFD682479B56100C58CFE /* Resources */,
@@ -556,7 +376,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 1140;
-				ORGANIZATIONNAME = "Aleksey Garbarev";
+				ORGANIZATIONNAME = "Alexander Morozov";
 				TargetAttributes = {
 					FA0FFD532479B55F00C58CFE = {
 						CreatedOnToolsVersion = 11.4.1;
@@ -569,7 +389,6 @@
 				};
 			};
 			buildConfigurationList = FA0FFD4F2479B55F00C58CFE /* Build configuration list for PBXProject "NightwavePlaza" */;
-			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -577,14 +396,14 @@
 				Base,
 			);
 			mainGroup = FA0FFD4B2479B55F00C58CFE;
+			packageReferences = (
+				11A401492F9CEE9900DC5BC2 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				11A4014E2F9CEF1100DC5BC2 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				11A401512F9CEF3200DC5BC2 /* XCRemoteSwiftPackageReference "Reachability" */,
+			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = FA0FFD552479B55F00C58CFE /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8453084526403C2C00A6AA73 /* Products */;
-					ProjectRef = 8453084426403C2C00A6AA73 /* Pods.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				FA0FFD532479B55F00C58CFE /* NightwavePlaza */,
@@ -592,153 +411,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8453085B26403C2D00A6AA73 /* ComponentsHub */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = ComponentsHub;
-			path = ComponentsHub.framework;
-			remoteRef = 8453085A26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453085D26403C2D00A6AA73 /* Differentiator */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = Differentiator;
-			path = Differentiator.framework;
-			remoteRef = 8453085C26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453085F26403C2D00A6AA73 /* FastCoding */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = FastCoding;
-			path = FastCoding.framework;
-			remoteRef = 8453085E26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086126403C2D00A6AA73 /* GestureRecognizerClosures */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = GestureRecognizerClosures;
-			path = GestureRecognizerClosures.framework;
-			remoteRef = 8453086026403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086326403C2D00A6AA73 /* libextobjc */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = libextobjc;
-			path = libextobjc.framework;
-			remoteRef = 8453086226403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086526403C2D00A6AA73 /* NSString-Hash */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = "NSString-Hash";
-			path = NSString_Hash.framework;
-			remoteRef = 8453086426403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086726403C2D00A6AA73 /* Pods-NightwavePlaza */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = "Pods-NightwavePlaza";
-			path = Pods_NightwavePlaza.framework;
-			remoteRef = 8453086626403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086926403C2D00A6AA73 /* Pods-NightwavePlazaTests */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = "Pods-NightwavePlazaTests";
-			path = Pods_NightwavePlazaTests.framework;
-			remoteRef = 8453086826403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086B26403C2D00A6AA73 /* PureLayout */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = PureLayout;
-			path = PureLayout.framework;
-			remoteRef = 8453086A26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086D26403C2D00A6AA73 /* ReachabilitySwift */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = ReachabilitySwift;
-			path = Reachability.framework;
-			remoteRef = 8453086C26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453086F26403C2D00A6AA73 /* RxBiBinding */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = RxBiBinding;
-			path = RxBiBinding.framework;
-			remoteRef = 8453086E26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087126403C2D00A6AA73 /* RxCocoa */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = RxCocoa;
-			path = RxCocoa.framework;
-			remoteRef = 8453087026403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087326403C2D00A6AA73 /* RxDataSources */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = RxDataSources;
-			path = RxDataSources.framework;
-			remoteRef = 8453087226403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087526403C2D00A6AA73 /* RxRelay */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = RxRelay;
-			path = RxRelay.framework;
-			remoteRef = 8453087426403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087726403C2D00A6AA73 /* RxSwift */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = RxSwift;
-			path = RxSwift.framework;
-			remoteRef = 8453087626403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087926403C2D00A6AA73 /* SAMKeychain */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = SAMKeychain;
-			path = SAMKeychain.framework;
-			remoteRef = 8453087826403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087B26403C2D00A6AA73 /* TRCAPIClient */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = TRCAPIClient;
-			path = TRCAPIClient.framework;
-			remoteRef = 8453087A26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8453087D26403C2D00A6AA73 /* TyphoonRestClient */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			name = TyphoonRestClient;
-			path = TyphoonRestClient.framework;
-			remoteRef = 8453087C26403C2D00A6AA73 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		FA0FFD522479B55F00C58CFE /* Resources */ = {
@@ -763,70 +435,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		3E1C49673F120BA35AA2341E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NightwavePlaza-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5DF1DDDAB75F1528AE92CC31 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NightwavePlaza/Pods-NightwavePlaza-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-NightwavePlaza/Pods-NightwavePlaza-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NightwavePlaza/Pods-NightwavePlaza-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C27BDAEAD401A3974FD21C5E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NightwavePlazaTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FA0FFD502479B55F00C58CFE /* Sources */ = {
@@ -1021,21 +629,21 @@
 		};
 		FA0FFD742479B56100C58CFE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1B6A38021F3A76E454BC6BE6 /* Pods-NightwavePlaza.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = PA5C4S9S27;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				SUPPORTS_MACCATALYST = YES;
@@ -1048,21 +656,21 @@
 		};
 		FA0FFD752479B56100C58CFE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1EB634F9D2EB6896592659A6 /* Pods-NightwavePlaza.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = PA5C4S9S27;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				SUPPORTS_MACCATALYST = YES;
@@ -1074,7 +682,6 @@
 		};
 		FA0FFD772479B56100C58CFE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B95CDEDCCCFCE1314198CB8F /* Pods-NightwavePlazaTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1097,7 +704,6 @@
 		};
 		FA0FFD782479B56100C58CFE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 308151CC824A698EFD427DE8 /* Pods-NightwavePlazaTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -1149,6 +755,56 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		11A401492F9CEE9900DC5BC2 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.10.2;
+			};
+		};
+		11A4014E2F9CEF1100DC5BC2 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
+		11A401512F9CEF3200DC5BC2 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		11A4014A2F9CEE9900DC5BC2 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11A401492F9CEE9900DC5BC2 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		11A4014C2F9CEE9900DC5BC2 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11A401492F9CEE9900DC5BC2 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		11A4014F2F9CEF1100DC5BC2 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11A4014E2F9CEF1100DC5BC2 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		11A401522F9CEF3200DC5BC2 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11A401512F9CEF3200DC5BC2 /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FA0FFD4C2479B55F00C58CFE /* Project object */;
 }
