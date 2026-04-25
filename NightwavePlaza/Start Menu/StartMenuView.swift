@@ -16,90 +16,99 @@ class StartMenuView: UIView {
     let fontSize: CGFloat = 14
     let iconSize: CGFloat = 32.0
     let iconPadding: CGFloat = 10
-    
     let menuWidth: CGFloat = 200
-    
     let headerWidth: CGFloat = 25
     let headerFontSize: CGFloat = 19
     let headerLeftPadding: CGFloat = 5
     
     var onClick: ((_ item: StartMenuItem) -> Void)?
     
-    func setup(items: [StartMenuItem], viewController: UIViewController) -> Void {
+    func setup(items: [StartMenuItem], viewController: UIViewController) {
         self.backgroundColor = UIColor(hex: "CBCBCB")
         
-        let bottomInset = viewController.bottomLayoutGuide.length
-        var width =  CGFloat(viewController.view.bounds.size.width) / 2
-        width = menuWidth // Hardcoded width for now..
-        
-        self.autoSetDimension(.height, toSize: CGFloat(CGFloat(items.count) * itemHeight + bottomInset))
-        self.autoSetDimension(.width, toSize: width)
+        let bottomInset = viewController.view.safeAreaInsets.bottom
+        let width = menuWidth
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        var lastView: UIView?
+        
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(stackView)
         
         for item in items {
-            let view = self.createViewForItem(item)
-            self.addSubview(view)
-            view.autoPinEdge(toSuperviewEdge: .left, withInset: headerWidth)
-            view.autoPinEdge(toSuperviewEdge: .right)
-            view.autoSetDimension(.height, toSize: itemHeight)
-
-            if let viewToPin = lastView {
-                view.autoPinEdge(.top, to: .bottom, of: viewToPin)
-            } else {
-                view.autoPinEdge(toSuperviewEdge: .top)
-            }
-            
-            view.onTap({recognizer in
-                if (recognizer.state == .ended) {
-                    self.onClick?(item)
-                }
-            })
-            
-            lastView = view
-
+            let itemView = self.createViewForItem(item)
+            stackView.addArrangedSubview(itemView)
         }
         
-        let view = self.createTitleView(leftInset: bottomInset)
-        self.addSubview(view)
-        view.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .right)
-        view.autoSetDimension(.width, toSize: headerWidth)
+        let titleView = self.createTitleView(leftInset: bottomInset)
+        titleView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(titleView)
         
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalToConstant: width),
+            self.heightAnchor.constraint(equalToConstant: CGFloat(items.count) * itemHeight + bottomInset),
+            
+            titleView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            titleView.topAnchor.constraint(equalTo: self.topAnchor),
+            titleView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            titleView.widthAnchor.constraint(equalToConstant: headerWidth),
+            
+            stackView.leadingAnchor.constraint(equalTo: titleView.trailingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: self.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -bottomInset) // Отступаем от Home Indicator
+        ])
     }
     
-    
-    func createViewForItem(_ item: StartMenuItem) -> UIView {
-        
-        let view = UIView()
+    func createViewForItem(_ item: StartMenuItem) -> UIControl {
+        let control = UIControl()
+        control.translatesAutoresizingMaskIntoConstraints = false
         
         let imageView = UIImageView()
         imageView.image = item.icon
-        
-        view.addSubview(imageView)
-        imageView.autoSetDimensions(to: CGSize(width: iconSize, height: iconSize))
-        imageView.autoAlignAxis(toSuperviewAxis: .horizontal)
-        imageView.autoPinEdge(toSuperviewEdge: .left, withInset: iconPadding)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        control.addSubview(imageView)
         
         let label = UILabel()
         label.text = item.title
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        control.addSubview(label)
         
-        view.addSubview(label)
-        label.autoAlignAxis(toSuperviewAxis: .horizontal)
-        label.autoPinEdge(.left, to: .right, of: imageView, withOffset: iconPadding)
+        NSLayoutConstraint.activate([
+            imageView.centerYAnchor.constraint(equalTo: control.centerYAnchor),
+            imageView.leadingAnchor.constraint(equalTo: control.leadingAnchor, constant: iconPadding),
+            imageView.widthAnchor.constraint(equalToConstant: iconSize),
+            imageView.heightAnchor.constraint(equalToConstant: iconSize),
+      
+            label.centerYAnchor.constraint(equalTo: control.centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: iconPadding),
+            label.trailingAnchor.constraint(equalTo: control.trailingAnchor, constant: -iconPadding)
+        ])
         
-        if (item.hasBottomLine) {
+        if item.hasBottomLine {
             let separator = UIView()
             separator.backgroundColor = UIColor(hex: "AEAEAE")
-            view.addSubview(separator)
-            separator.autoSetDimension(.height, toSize: itemSeparator)
-            separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            separator.translatesAutoresizingMaskIntoConstraints = false
+            control.addSubview(separator)
+            
+            NSLayoutConstraint.activate([
+                separator.heightAnchor.constraint(equalToConstant: itemSeparator),
+                separator.leadingAnchor.constraint(equalTo: control.leadingAnchor),
+                separator.trailingAnchor.constraint(equalTo: control.trailingAnchor),
+                separator.bottomAnchor.constraint(equalTo: control.bottomAnchor)
+            ])
         }
         
-        return view
+        let action = UIAction { [weak self] _ in
+            self?.onClick?(item)
+        }
+        control.addAction(action, for: .touchUpInside)
         
+        return control
     }
     
     func createTitleView(leftInset: CGFloat) -> UIView {
@@ -107,8 +116,6 @@ class StartMenuView: UIView {
         view.fontSize = self.headerFontSize
         view.leftPadding = self.headerLeftPadding
         view.leftInset = leftInset
-        return view;
+        return view
     }
-    
-    
 }
