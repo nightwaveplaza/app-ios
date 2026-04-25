@@ -7,17 +7,16 @@
 //
 
 import UIKit
-import Foundation
 import AVFoundation
-import RxSwift
+import Combine
 
 class BackgroundView: UIView {
     
     private var player = AVPlayer()
     private var playerLayer = AVPlayerLayer()
     private var solidColor = UIColor(named: "008B8B")
-    
-    private var cache = BackgroundCacheManager.shared;
+    private var cache = BackgroundCacheManager.shared
+    private var cancellables = Set<AnyCancellable>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,23 +41,19 @@ class BackgroundView: UIView {
                                                object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeForeground(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-        
-        cache.precacheAllOnWifi()
     }
     
-    var disposeBag = DisposeBag()
-    
     func setUrl(url: URL) {
-        
-        cache.getLocalUrl(remoteUrl: url) { (result, error) in
-            if let localUrl = result {
+        Task {
+            do {
+                let localUrl = try await cache.getLocalUrl(remoteUrl: url)
                 self.setLocalUrl(url: localUrl)
-            } else {
+                
+            } catch {
+                print("Failed to prepare background video: \(error)")
                 self.setSolid()
             }
         }
-        
-        
     }
     
     func setSolid() {
@@ -82,15 +77,14 @@ class BackgroundView: UIView {
     
     private func startPlayer(player: AVPlayer, completion: @escaping () -> ()) {
         player.play()
-       var statusDisposable: Disposable?;
-       statusDisposable = player.rx.observe(AVPlayer.TimeControlStatus.self, "timeControlStatus").subscribe { (event) in
-           if let status = event.element as? AVPlayer.TimeControlStatus {
-               if (status == .playing) {
-                   statusDisposable?.dispose()
-                   completion()
-               }
-           }
-       };
+        player.publisher(for: \.timeControlStatus)
+            .sink { [weak self] status in
+                if status == .playing {
+                    completion()
+                    self?.cancellables.removeAll()
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func replacePlayer(player: AVPlayer) {
@@ -123,6 +117,9 @@ class BackgroundView: UIView {
             self.player = player
         })
         CATransaction.commit()
+        
+        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.magnificationFilter = .nearest
     }
     
     @objc func playerItemDidReachEnd(notification: Notification) {

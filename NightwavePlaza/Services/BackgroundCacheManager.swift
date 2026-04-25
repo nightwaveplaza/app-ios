@@ -7,96 +7,43 @@
 //
 
 import Foundation
-import Reachability
+import Network
+import CryptoKit
 
 class BackgroundCacheManager {
-    
     static let shared = BackgroundCacheManager()
     
-    let reachability = try! Reachability()
-    var shouldPrecache = true
-
-    func precacheAllOnWifi() {
-        
-        reachability.whenReachable = { reachability in
-            if reachability.connection == .wifi {
-                if self.shouldPrecache {
-                    self.precacheAll()
-                    self.shouldPrecache = false;
-                }
-            }
-        }
-        
-        do {
-            try reachability.startNotifier()
-        } catch {
-            print("Unable to start notifier")
-        }
-        
-    }
+    private let monitor = NWPathMonitor()
+    private let monitorQueue = DispatchQueue(label: "NetworkMonitorQueue")
     
-    func precacheAll() {
-        RestClient.shared.restClient.send(RequestToGetBackgrounds()) {[unowned self] (result, error) in
-
-            if let bg = result as? [[String: Any]] {
-                for bgItem in bg {
-                    let videoUrl = URL(string: bgItem["video_src"] as! String)!
-                    self.getLocalUrl(remoteUrl: videoUrl) { (res, err) in }
-                }
-            }
-        }
-    }
-    
-    func getLocalUrl(remoteUrl: URL, result: @escaping (_ result: URL?, _ error: Error?) -> Void) -> Void {
+    func getLocalUrl(remoteUrl: URL) async throws -> URL {
+        let localUrl = localVideoUrl(for: remoteUrl)
         
-        let localUrl = self.urlForLocalVideo(remoteUrl: remoteUrl)
         if FileManager.default.fileExists(atPath: localUrl.path) {
-            result(localUrl, nil)
-            return
+            return localUrl
         }
         
-        
-        let request = RequestToDownloadFile()
-        request.url = remoteUrl.absoluteString
-
-        RestClient.shared.restClient.send(request) { (image, error) in
-            
-            if let path = request.outputPath {
-                try? FileManager.default.moveItem(at: URL(fileURLWithPath: path), to: localUrl)
-                result(localUrl, nil)
-            } else {
-                result(nil, error)
-            }
-            
-
-        }
-        
+        let (tempUrl, _) = try await URLSession.shared.download(from: remoteUrl)
+        try? FileManager.default.moveItem(at: tempUrl, to: localUrl)
+        return localUrl
     }
     
-    func urlForLocalVideo(remoteUrl: URL) -> URL {
-        let dir = self.getDocumentsDirectory().appendingPathComponent("backgroundVideos")
-        do {
-            if (!FileManager.default.fileExists(atPath: dir.path)) {
-                try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
-            }
-        } catch {
-            
+    private func localVideoUrl(for remoteUrl: URL) -> URL {
+        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    .appendingPathComponent("backgroundVideos")
+        
+        if !FileManager.default.fileExists(atPath: dir.path) {
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
         }
         
-        var pathExt = (remoteUrl.absoluteString as NSString).pathExtension
-        if (pathExt as NSString).length == 0 {
+        var pathExt = remoteUrl.pathExtension
+        if pathExt.isEmpty {
             pathExt = "mp4"
         }
         
-        let hash = (remoteUrl.absoluteString as NSString).sha1()!
-        return dir.appendingPathComponent("\(hash).\(pathExt)")
+        let inputData = Data(remoteUrl.absoluteString.utf8)
+        let hash = SHA256.hash(data: inputData).compactMap { String(format: "%02x", $0) }.joined()
         
-    }
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
-    }
-    
+        return dir.appendingPathComponent("\(hash).\(pathExt)")
+    }    
 }

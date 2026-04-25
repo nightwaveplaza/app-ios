@@ -43,9 +43,6 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.setupTimer()
-        self.bindStatusToUI()
     }
     
     @IBAction func onTriggerPlayButton(_ sender: Any) {
