@@ -6,42 +6,21 @@
 //  Copyright © 2020 Aleksey Garbarev. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import WebKit
-import RxCocoa
-import RxSwift
 import SafariServices
 
 class WebViewController: UIViewController, WKNavigationDelegate {
     
     let backgroundView = BackgroundView()
-    let webView = WKWebView()
-    
-    private var disposeBag = DisposeBag()
+    lazy var webView: WKWebView = {
+        let config = WKWebViewConfiguration()
+        let webView = WKWebView(frame: .zero, configuration: config)
+        return webView
+    }()
     
     private let playback: PlaybackService
-
-    
-    private let webBridge = WebBridgeService()
-    
     private var selectionWasDisabled = false
-    
-    var fullScreenStorage = CCUserDefaultsStorage(with: NSNumber.self, key: "fullScreen")
-    var fullScreen: Bool {
-        set {
-            
-            fullScreenStorage?.save(NSNumber(booleanLiteral: newValue))
-        }
-        get {
-            if let value = fullScreenStorage?.getObject() as? NSNumber {
-                return value.boolValue
-            } else {
-                return true
-            }
-        }
-    }
-    
-    var timer: Timer?
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.playback = PlaybackService();
@@ -54,47 +33,48 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         
-        self.view.addSubview(backgroundView)
-        backgroundView.autoPinEdgesToSuperviewEdges()
+        view.addSubview(backgroundView)
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.webBridge.setup(webView: self.webView, statusService: self.statusService, playback: self.playback, metadata: self.metadata, viewController: self);
+        view.addSubview(webView)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // register callbacks
+        let webBridge = WebBridgeService(callback: self)
+        webBridge.setup(configuration: webView.configuration, playback: playback, viewController: self)
         
         self.setupWebView()
     }
     
     
     func setupWebView() {
-        self.view.addSubview(webView);
-        webView.autoPinEdgesToSuperviewEdges()
+        webView.navigationDelegate = self
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.isScrollEnabled = false
         
-//        var resourcesPath: NSString
-//        
-//        #if targetEnvironment(macCatalyst)
-//        resourcesPath = Bundle.main.resourcePath! as NSString
-//        #else
-//        resourcesPath = Bundle.main.bundlePath as NSString
-//        #endif
-//
-//        let webPath = resourcesPath.appendingPathComponent("web");
-//        let indexPath = (webPath as NSString).appendingPathComponent("index.html");
-//        
-//        let indexContent = try! NSString(contentsOfFile: indexPath, encoding: String.Encoding.utf8.rawValue);
-// 
-//        webView.loadHTMLString(indexContent as String, baseURL: URL(fileURLWithPath: webPath));
-//        webView.navigationDelegate = self
-        
-        guard let url = URL(string: "http://plaza.local:4173") else {
-                print("Invalid URL")
-                return
-            }
-        let request = URLRequest(url: url)
-            webView.load(request)
-            
-            webView.navigationDelegate = self
+        #if DEBUG
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = true
+        }
+        #endif
+                
+        guard let url = URL(string: "http://plaza.int:4173") else { return }
+        webView.load(URLRequest(url: url))
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -102,7 +82,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     override var prefersStatusBarHidden: Bool {
-        return self.fullScreen
+        return Settings.fullScreen
     }
     
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
@@ -132,31 +112,78 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+
+        guard let url = navigationAction.request.url else {
+            decisionHandler(.allow)
+            return
+        }
         
-        if let url = navigationAction.request.url, url.scheme == "mailto" {
+        if url.scheme == "mailto" {
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             } else {
-                let error = UIAlertController(title: "Error", message: "Unable to compose mail. Please check mail configuration and try again", preferredStyle: .alert);
-                error.addAction(UIAlertAction(title: "Ok", style: .default, handler: { [unowned error] (_action) in
-                    error.dismiss(animated: true, completion: nil)
-                }))
-                self.present(error, animated: true, completion: nil)
+                let errorAlert = UIAlertController(title: "Error", message: "Unable to compose mail.", preferredStyle: .alert)
+                errorAlert.addAction(UIAlertAction(title: "Ok", style: .default))
+                self.present(errorAlert, animated: true)
             }
             decisionHandler(.cancel)
-        } else if let url = navigationAction.request.url, url.scheme?.hasPrefix("http") == true {
+            return
+        }
+        
+        if url.host == "plaza.int" {
+            decisionHandler(.allow)
+            return
+        }
+    
+        if url.scheme?.hasPrefix("http") == true {
             let controller = SFSafariViewController(url: url)
             self.present(controller, animated: true, completion: nil)
-            
             decisionHandler(.cancel)
+            return
         }
-        else {
-            decisionHandler(.allow)
-        }
-
-    }
-
-
-    
+        
+        decisionHandler(.allow)
+    }    
 }
 
+extension WebViewController: WebViewCallback {
+    
+    func onOpenDrawer() {
+   
+    }
+    
+    func onPlayAudio() {
+        playback.play()
+    }
+    
+    func onSetBackground(src: String) {
+        if src == "solid" {
+            backgroundView.setSolid()
+        } else if let url = URL(string: src) {
+            backgroundView.setUrl(url: url)
+        }
+    }
+    
+    func onToggleFullscreen() {
+        Settings.fullScreen = !Settings.fullScreen
+        UIView.animate(withDuration: 0.5) {
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
+    }
+    
+    func onSetSleepTimer(time: Int) {
+//        sleepTimer.sleepAfter(minutes: Double(time))
+    }
+    
+    func onSetLanguage(lang: String) {
+        //Settings.language = lang
+    }
+    
+    func onReady() {
+        print("Vue App is ready!")
+    }
+    
+    func onSetThemeColor(color: String) {
+        Settings.themeColor = color
+    }
+}
