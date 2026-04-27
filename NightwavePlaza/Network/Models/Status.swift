@@ -11,5 +11,5 @@ struct Status: Decodable {
     let listeners: Int
     let reactions: Int
     let position: Int
-    let updated_at: Int
+    let updatedAt: Int
 }

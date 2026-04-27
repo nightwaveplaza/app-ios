@@ -12,7 +12,7 @@ struct Song: Decodable {
     let album: String
     let title: String
     let length: Int
-    let artwork_src: String
-    let arwork_sm_src: String
-    let preview_src: String
+    let artworkSrc: String
+    let artworkSmSrc: String
+    let previewSrc: String
 }
