@@ -11,7 +11,7 @@ import Foundation
 
 class StartMenuView: UIView {
     
-    let itemHeight: CGFloat = 50.0
+    let itemHeight: CGFloat = 44.0
     let itemSeparator: CGFloat = 1
     let fontSize: CGFloat = 14
     let iconSize: CGFloat = 32.0
@@ -24,7 +24,7 @@ class StartMenuView: UIView {
     var onClick: ((_ item: StartMenuItem) -> Void)?
     
     func setup(items: [StartMenuItem], viewController: UIViewController) {
-        self.backgroundColor = UIColor(hex: "CBCBCB")
+        self.backgroundColor = UIColor(named: "StartBackground")
         
         let bottomInset = viewController.view.safeAreaInsets.bottom
         let width = menuWidth
@@ -93,7 +93,7 @@ class StartMenuView: UIView {
         
         if item.hasBottomLine {
             let separator = UIView()
-            separator.backgroundColor = UIColor(hex: "AEAEAE")
+            separator.backgroundColor = UIColor(named: "StartDivider")
             separator.translatesAutoresizingMaskIntoConstraints = false
             control.addSubview(separator)
             
