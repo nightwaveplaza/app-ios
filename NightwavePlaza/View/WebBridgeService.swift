@@ -11,10 +11,8 @@ import WebKit
 
 class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
     weak var viewController: WebViewController?
-    private var playback: PlaybackService!
+    private var playerService: PlayerService!
     private var sleepTimer: SleepTimerService!
-    
-    private var startMenuHandler = StartMenuHandler()
     
     weak var callback: WebViewCallback?
         
@@ -25,11 +23,11 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
     
     func setup(
         configuration: WKWebViewConfiguration,
-        playback: PlaybackService,
+        playerService: PlayerService,
         viewController: WebViewController
     ) {
-        self.playback = playback
-        self.sleepTimer = SleepTimerService(playback: self.playback)
+        self.playerService = playerService
+        //self.sleepTimer = SleepTimerService(playback: self.playback)
 //        self.sleepTimer.onSleep = { [unowned self] in
 //            self.sendCurrentStatus()
 //        }
@@ -56,6 +54,8 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
         }
         
         let args = body["args"] as? [Any] ?? []
+        
+        print(method)
         
         switch method {
             case "openDrawer":

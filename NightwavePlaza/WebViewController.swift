@@ -9,6 +9,7 @@
 import UIKit
 import WebKit
 import SafariServices
+import Combine
 
 class WebViewController: UIViewController, WKNavigationDelegate {
     
@@ -19,16 +20,17 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         return webView
     }()
     
-    private let playback: PlaybackService
+    private let playerService: PlayerService
     private var startMenuHandler = StartMenuHandler()
+    private var cancellables = Set<AnyCancellable>()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        self.playback = PlaybackService();
+        self.playerService = PlayerService();
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     required init?(coder: NSCoder) {
-        self.playback = PlaybackService();
+        self.playerService = PlayerService();
         super.init(coder: coder)
     }
     
@@ -55,13 +57,28 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         
         // register callbacks
         let webBridge = WebBridgeService(callback: self)
-        webBridge.setup(configuration: webView.configuration, playback: playback, viewController: self)
+        webBridge.setup(configuration: webView.configuration, playerService: playerService, viewController: self)
         
         startMenuHandler.setup(inViewController: self) { [weak self] action in
             self?.handleMenuAction(action)
         }
         
         self.setupWebView()
+        setupController()
+    }
+    
+    private func setupController() {
+        playerService.$isPlaying
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] isPlaying in
+            self?.pushPlaybackState(isPlaying: isPlaying)
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func pushPlaybackState(isPlaying: Bool) {
+        print("Playback state: ", isPlaying)
+        webView.emitEvent(action: "player:playing", payload: isPlaying)
     }
     
     
@@ -159,11 +176,15 @@ extension WebViewController: WebViewCallback {
     }
     
     func onPlayAudio() {
-        playback.play()
+        if (playerService.isPlaying) {
+            playerService.pause()
+        } else {
+            playerService.play()
+            webView.emitEvent(action: "player:buffering")
+        }
     }
     
     func onSetBackground(src: String) {
-        print(src)
         if src == "solid" {
             backgroundView.setSolid()
         } else if let url = URL(string: src) {
@@ -188,6 +209,7 @@ extension WebViewController: WebViewCallback {
     
     func onReady() {
         print("Vue App is ready!")
+        webView.emitEvent(action: "player:playing", payload: playerService.isPlaying)
     }
     
     func onSetThemeColor(color: String) {
