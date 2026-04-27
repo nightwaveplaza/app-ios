@@ -55,8 +55,6 @@ class StartMenuHandler {
             darkView.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor),
             darkView.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor),
             
-      
-            menuView.topAnchor.constraint(equalTo: vc.view.topAnchor),
             menuView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor),
             left
         ])

@@ -56,8 +56,8 @@ class StartMenuHeaderView: UIView {
     }
     
     func setupGradient() {
-        let colorTop = UIColor.black.cgColor
-        let colorBottom = UIColor(named: "0c00f0")!.cgColor
+        let colorTop = UIColor(named: "StartGradientBlack")?.cgColor ?? UIColor.clear.cgColor
+        let colorBottom = UIColor(named: "StartGradientBlue")?.cgColor ?? UIColor.clear.cgColor
 
         self.gradientLayer = CAGradientLayer()
         self.gradientLayer.colors = [colorTop, colorTop, colorBottom]

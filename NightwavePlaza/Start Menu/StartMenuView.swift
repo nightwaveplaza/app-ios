@@ -33,7 +33,7 @@ class StartMenuView: UIView {
         
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(stackView)
         
@@ -48,7 +48,6 @@ class StartMenuView: UIView {
         
         NSLayoutConstraint.activate([
             self.widthAnchor.constraint(equalToConstant: width),
-            self.heightAnchor.constraint(equalToConstant: CGFloat(items.count) * itemHeight + bottomInset),
             
             titleView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             titleView.topAnchor.constraint(equalTo: self.topAnchor),
@@ -58,7 +57,8 @@ class StartMenuView: UIView {
             stackView.leadingAnchor.constraint(equalTo: titleView.trailingAnchor),
             stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             stackView.topAnchor.constraint(equalTo: self.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -bottomInset) // Отступаем от Home Indicator
+
+            stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -bottomInset)
         ])
     }
     
@@ -79,6 +79,8 @@ class StartMenuView: UIView {
         control.addSubview(label)
         
         NSLayoutConstraint.activate([
+            control.heightAnchor.constraint(equalToConstant: itemHeight),
+            
             imageView.centerYAnchor.constraint(equalTo: control.centerYAnchor),
             imageView.leadingAnchor.constraint(equalTo: control.leadingAnchor, constant: iconPadding),
             imageView.widthAnchor.constraint(equalToConstant: iconSize),
