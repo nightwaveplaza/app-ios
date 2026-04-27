@@ -13,10 +13,12 @@ import Combine
 class BackgroundView: UIView {
     
     private var player = AVPlayer()
+    private var pendingPlayer: AVPlayer?
     private var playerLayer = AVPlayerLayer()
     private var solidColor = UIColor(named: "008B8B")
     private var cache = BackgroundCacheManager.shared
     private var cancellables = Set<AnyCancellable>()
+    private var downloadTask: Task<Void, Never>?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,29 +38,48 @@ class BackgroundView: UIView {
         playerLayer.videoGravity = .resizeAspectFill
         
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(playerItemDidReachEnd(notification:)),
-                                               name: .AVPlayerItemDidPlayToEndTime,
-                                               object: nil)
+           selector: #selector(playerItemDidReachEnd(notification:)),
+           name: .AVPlayerItemDidPlayToEndTime,
+           object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didBecomeForeground(notification:)), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     func setUrl(url: URL) {
-        Task {
+        downloadTask?.cancel()
+        downloadTask = Task { [weak self] in
+            guard let self = self else { return }
+            
             do {
-                let localUrl = try await cache.getLocalUrl(remoteUrl: url)
+                let localUrl = try await self.cache.getLocalUrl(remoteUrl: url)
+                
+                guard !Task.isCancelled else { return }
+                
                 self.setLocalUrl(url: localUrl)
                 
             } catch {
-                print("Failed to prepare background video: \(error)")
-                self.setSolid()
+                if !Task.isCancelled {
+                    print("Failed to prepare background video: \(error)")
+                    self.setSolid()
+                }
             }
         }
     }
     
     func setSolid() {
         self.backgroundColor = .clear
-        player.rate = 0
+        downloadTask?.cancel()
+        downloadTask = nil
+        
+        player.pause()
+        player.replaceCurrentItem(with: nil)
+        
+        pendingPlayer?.pause()
+        pendingPlayer?.replaceCurrentItem(with: nil)
+        pendingPlayer = nil
+        
+        cancellables.removeAll()
+        
         playerLayer.isHidden = true
         playerLayer.player = nil
     }
@@ -67,11 +88,19 @@ class BackgroundView: UIView {
         self.backgroundColor = UIColor.black
         playerLayer.isHidden = false
         
+        pendingPlayer?.pause()
+        pendingPlayer?.replaceCurrentItem(with: nil)
+        cancellables.removeAll()
+        
         let nextPlayer = AVPlayer(url: url)
         nextPlayer.actionAtItemEnd = .none
+        self.pendingPlayer = nextPlayer
         
-        self.startPlayer(player: nextPlayer) {
+        self.startPlayer(player: nextPlayer) { [weak self] in
+            guard let self = self else { return }
+            
             self.replacePlayer(player: nextPlayer)
+            self.pendingPlayer = nil
         }
     }
     
@@ -88,9 +117,9 @@ class BackgroundView: UIView {
     }
     
     func replacePlayer(player: AVPlayer) {
-        
         let newPlayerLayer = AVPlayerLayer(player: player)
         newPlayerLayer.videoGravity = .resizeAspectFill
+        newPlayerLayer.magnificationFilter = .nearest
         newPlayerLayer.opacity = 1
         newPlayerLayer.frame = self.bounds
         self.layer.addSublayer(newPlayerLayer)
@@ -119,7 +148,6 @@ class BackgroundView: UIView {
         CATransaction.commit()
         
         playerLayer.videoGravity = .resizeAspectFill
-        playerLayer.magnificationFilter = .nearest
     }
     
     @objc func playerItemDidReachEnd(notification: Notification) {
