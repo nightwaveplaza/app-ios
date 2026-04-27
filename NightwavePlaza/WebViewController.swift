@@ -20,7 +20,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }()
     
     private let playback: PlaybackService
-    private var selectionWasDisabled = false
+    private var startMenuHandler = StartMenuHandler()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.playback = PlaybackService();
@@ -57,6 +57,10 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         let webBridge = WebBridgeService(callback: self)
         webBridge.setup(configuration: webView.configuration, playback: playback, viewController: self)
         
+        startMenuHandler.setup(inViewController: self) { [weak self] action in
+            self?.handleMenuAction(action)
+        }
+        
         self.setupWebView()
     }
     
@@ -66,6 +70,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.isScrollEnabled = false
+        
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
         
         #if DEBUG
         if #available(iOS 16.4, *) {
@@ -87,19 +93,6 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .slide
-    }
-    
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        
-        if selectionWasDisabled == false {
-            let javascriptStyle =
-            """
-                var css = 'input[type=text],input[type=password], input[type=email], input[type=number], input[type=time], input[type=date], textarea {-webkit-touch-callout: auto;-webkit-user-select: auto;} *{-webkit-touch-callout:none;-webkit-user-select:none}';
-                var head = document.head || document.getElementsByTagName('head')[0]; var style = document.createElement('style'); style.type = 'text/css'; style.appendChild(document.createTextNode(css)); head.appendChild(style);
-            """
-            webView.evaluateJavaScript(javascriptStyle, completionHandler: nil)
-            selectionWasDisabled = true
-        }
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
@@ -143,13 +136,26 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         }
         
         decisionHandler(.allow)
-    }    
+    }
+    
+    private func handleMenuAction(_ action: String) {
+        let windowToOpen: String
+        print(action)
+        
+        if (action == "user-favorites" || action == "user") && Settings.userToken.isEmpty {
+            windowToOpen = "user-login"
+        } else {
+            windowToOpen = action
+        }
+        
+        webView.emitEvent(action: "window:open", payload: windowToOpen)
+    }
 }
 
 extension WebViewController: WebViewCallback {
     
     func onOpenDrawer() {
-   
+        startMenuHandler.show()
     }
     
     func onPlayAudio() {
@@ -157,6 +163,7 @@ extension WebViewController: WebViewCallback {
     }
     
     func onSetBackground(src: String) {
+        print(src)
         if src == "solid" {
             backgroundView.setSolid()
         } else if let url = URL(string: src) {
