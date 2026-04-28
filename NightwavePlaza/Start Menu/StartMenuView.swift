@@ -15,11 +15,11 @@ class StartMenuView: UIView {
     let itemSeparator: CGFloat = 1
     let fontSize: CGFloat = 14
     let iconSize: CGFloat = 32.0
-    let iconPadding: CGFloat = 10
+    let iconPadding: CGFloat = 6
     let menuWidth: CGFloat = 200
-    let headerWidth: CGFloat = 25
-    let headerFontSize: CGFloat = 19
-    let headerLeftPadding: CGFloat = 5
+    let headerWidth: CGFloat = 24
+    let headerFontSize: CGFloat = 16
+    let headerLeftPadding: CGFloat = 6
     
     var onClick: ((_ item: StartMenuItem) -> Void)?
     
