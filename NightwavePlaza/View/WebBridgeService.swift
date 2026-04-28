@@ -34,15 +34,6 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
         
         self.viewController = viewController
         
-//        TODO!!!
-//        startMenuHandler.setup(inViewController: viewController, onSelect: { action in
-//            if (action == "user-favorites" || action == "user") && AuthStorage.getKey() == "" {
-//                self.webBus.sendMessage(name: "openWindow", data: [ "window": "user-login" ])
-//            } else {
-//                self.webBus.sendMessage(name: "openWindow", data: [ "window": action ])
-//            }
-//        })
-//        
         configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "ios_app")
     }
     

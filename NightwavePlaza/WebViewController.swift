@@ -16,6 +16,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     let backgroundView = BackgroundView()
     lazy var webView: WKWebView = {
         let config = WKWebViewConfiguration()
+        config.setURLSchemeHandler(LocalSchemeHandler(), forURLScheme: "plaza")
         let webView = WKWebView(frame: .zero, configuration: config)
         return webView
     }()
@@ -96,8 +97,9 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         }
         #endif
                 
-        guard let url = URL(string: "http://plaza.int:4173") else { return }
-        webView.load(URLRequest(url: url))
+        if let url = URL(string: "plaza://localhost") {
+            webView.load(URLRequest(url: url))
+        }
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
