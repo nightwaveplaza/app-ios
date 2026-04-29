@@ -1,5 +1,5 @@
 //
-//  WebViewController.swift
+//  MainViewController.swift
 //  NightwavePlaza
 //
 //  Created by Aleksey Garbarev on 02.08.2020.
@@ -12,21 +12,27 @@ import WebKit
 import SafariServices
 import Combine
 
-class MainViewController: UIViewController, WKNavigationDelegate {
+class MainViewController: UIViewController {
     
+    // MARK: - UI Components
     let backgroundView = BackgroundView()
+    
     lazy var webView: WKWebView = {
         let config = WKWebViewConfiguration()
-        config.setURLSchemeHandler(LocalSchemeHandler(), forURLScheme: "plaza")
         let webView = WKWebView(frame: .zero, configuration: config)
         return webView
     }()
     
+    // MARK: - Dependencies & State
     private let playerService: PlayerService
     private let sleepTimerService: SleepTimerService
     private var startMenuHandler = StartMenuHandler()
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Initialization
+    
+    // Core application services are instantiated early to ensure playback
+    // and background timer logic are ready before the visual layer mounts
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.playerService = PlayerService()
         self.sleepTimerService = SleepTimerService(playerService: playerService)
@@ -39,6 +45,7 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         super.init(coder: coder)
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,6 +55,8 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         view.addSubview(webView)
         webView.translatesAutoresizingMaskIntoConstraints = false
         
+        // Anchoring WebView directly to the view's edges (ignoring safe areas)
+        // to allow the web app to draw edge-to-edge and handle notch insets via CSS
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -62,7 +71,7 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         
         view.backgroundColor = UIColor(named: "BackgroundTeal")
         
-        // register callbacks
+        // Binds JS postMessage events to native protocol execution
         let webBridge = WebBridgeService(callback: self)
         webBridge.setup(configuration: webView.configuration, playerService: playerService, viewController: self)
         
@@ -74,6 +83,10 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         setupController()
     }
     
+    // MARK: - Setup & Configuration
+    
+    // Subscribes to the underlying audio engine's state changes
+    // Forces UI-bound emissions to the main thread to prevent WebView execution crashes
     private func setupController() {
         playerService.$isPlaying
         .receive(on: DispatchQueue.main)
@@ -95,6 +108,8 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         webView.backgroundColor = .clear
         webView.scrollView.isScrollEnabled = false
         
+        // Prevents the system from injecting automatic scroll padding,
+        // leaving environmental inset control entirely to the web layer
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         
         #if DEBUG
@@ -102,14 +117,17 @@ class MainViewController: UIViewController, WKNavigationDelegate {
             webView.isInspectable = true
         }
         #endif
+        
+        LocalWebServer.shared.start()
                 
-        if let url = URL(string: "plaza://localhost") {
+        if let url = URL(string: "http://localapp.plaza.one:8080") {
             webView.load(URLRequest(url: url))
         }
     }
     
+    // MARK: - Status Bar Configuration
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        return Settings.themeColor.isLightColor ? .darkContent : .lightContent
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -120,22 +138,45 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         return .slide
     }
     
+    // MARK: - Helpers
+    private func handleMenuAction(_ action: String) {
+        print(action)
+        webView.emitEvent(action: "window:open", payload: action)
+    }
+}
+
+// MARK: - WKNavigationDelegate
+extension MainViewController: WKNavigationDelegate {
+    
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         print("WebViewError: Did Fail Navigation \(String(describing: navigation)), Error = \(error)");
     }
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         print("WebViewError: didFailProvisionalNavigation \(String(describing: navigation)), Error = \(error)");
-
     }
     
+    // Sandboxes navigation to protect the core SPA environment
+    // Routes external traffic to isolated system components
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-
         guard let url = navigationAction.request.url else {
+            decisionHandler(.cancel)
+            return
+        }
+        
+        // Allow iframes
+        if navigationAction.targetFrame?.isMainFrame == false {
             decisionHandler(.allow)
             return
         }
         
+        // Explicitly whitelist internal API communication
+        if url.host == "plaza.int" || url.host == "localapp.plaza.one" {
+            decisionHandler(.allow)
+            return
+        }
+        
+        // Route native mail links to the default system composer
         if url.scheme == "mailto" {
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -147,12 +188,8 @@ class MainViewController: UIViewController, WKNavigationDelegate {
             decisionHandler(.cancel)
             return
         }
-        
-        if url.host == "plaza.int" {
-            decisionHandler(.allow)
-            return
-        }
     
+        // Prevent hijacking the main WebView. Open external web links in a modal Safari browser
         if url.scheme?.hasPrefix("http") == true {
             let controller = SFSafariViewController(url: url)
             self.present(controller, animated: true, completion: nil)
@@ -162,13 +199,11 @@ class MainViewController: UIViewController, WKNavigationDelegate {
         
         decisionHandler(.allow)
     }
-    
-    private func handleMenuAction(_ action: String) {
-        print(action)
-        webView.emitEvent(action: "window:open", payload: action)
-    }
 }
 
+// MARK: - WebViewCallback
+
+// Routes abstracted interactions from the JS layer to native implementations.
 extension MainViewController: WebViewCallback {
     
     func onOpenDrawer() {
@@ -179,8 +214,8 @@ extension MainViewController: WebViewCallback {
         if (playerService.isPlaying) {
             playerService.pause()
         } else {
-            playerService.play()
             webView.emitEvent(action: "player:buffering")
+            playerService.play()
         }
     }
     
@@ -194,6 +229,7 @@ extension MainViewController: WebViewCallback {
     
     func onToggleFullscreen() {
         Settings.fullScreen = !Settings.fullScreen
+        // Animate the status bar to synchronize with the web layer's visual transition
         UIView.animate(withDuration: 0.5) {
             self.setNeedsStatusBarAppearanceUpdate()
         }
@@ -209,10 +245,15 @@ extension MainViewController: WebViewCallback {
     
     func onReady() {
         print("Vue App is ready!")
+        // Sync the web layer with the actual playback state upon initialization
         webView.emitEvent(action: "player:playing", payload: playerService.isPlaying)
     }
     
     func onSetThemeColor(color: String) {
         Settings.themeColor = color
+        
+        UIView.animate(withDuration: 0.3) {
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
     }
 }
