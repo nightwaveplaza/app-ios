@@ -2,62 +2,73 @@
 //  SleepTimerService.swift
 //  NightwavePlaza
 //
-//  Created by Aleksey Garbarev on 07.09.2020.
-//  Copyright © 2020 Aleksey Garbarev. All rights reserved.
+//  Created by Alexander on 28.04.2026.
+//  Copyright © 2026 Alexander Morozov. All rights reserved.
 //
 
-import Foundation
-import RxSwift
-import RxCocoa
 
-class SleepTimerService {
+import Foundation
+import Combine
+
+final class SleepTimerService {
     
-    var playback: PlaybackService
+    private var cancellables = Set<AnyCancellable>()
+    private var timer: Timer?
     
-    var timer: Timer?
+    private let playerService: PlayerService
     
     var onSleep: (() -> Void)?
     
-    let disposeBag = DisposeBag()
-    
-    init(playback: PlaybackService) {
-        self.playback = playback
-        
-        self.playback.playbackRate$.subscribe(onNext: { [unowned self] rate in
-            if rate == 0 {
-                self.cleanupTimer()
-            }
-        }, onError: nil, onCompleted: nil, onDisposed: nil)
-        .disposed(by: self.disposeBag)
+    init(playerService: PlayerService) {
+        self.playerService = playerService
+        setupObservers()
     }
     
-    
-    func sleepAfter(minutes: Double) {
-        let seconds = minutes * 60
-
-        if minutes == 0 {
-            self.cleanupTimer()
-        } else {
-            self.timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(seconds), repeats: false) { (timer) in
-                self.cleanupTimer()
-                self.playback.player.pause()
-                self.onSleep?()
+    private func setupObservers() {
+        playerService.$isPlaying
+            .receive(on: DispatchQueue.main)
+            .filter { !$0 }
+            .sink { [weak self] _ in
+                self?.cleanupTimer()
             }
+            .store(in: &cancellables)
+    }
+  
+    func sleepAt(timestamp: Double) {
+        cleanupTimer()
+        
+        guard timestamp > 0 else { return }
+        
+        let fireDate = Date(timeIntervalSince1970: timestamp / 1000)
+        let interval = fireDate.timeIntervalSince(Date())
+     
+        guard interval > 0 else {
+            executeSleep()
+            return
         }
         
+        let timer = Timer(fire: fireDate, interval: 0, repeats: false) { [weak self] _ in
+            self?.executeSleep()
+        }
+        
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
     }
     
-    func milisecondsSince1970ToSleep() -> Double {
-        if let timer = self.timer {
-            return timer.fireDate.timeIntervalSince1970 * 1000
-        } else {
-            return 0
-        }
+    private func executeSleep() {
+        playerService.pause()
+        onSleep?()
+        cleanupTimer()
+    }
+    
+    func getRemainingMillis() -> Double {
+        guard let fireDate = timer?.fireDate else { return 0 }
+        let remaining = fireDate.timeIntervalSince(Date())
+        return max(0, remaining * 1000)
     }
     
     private func cleanupTimer() {
-        self.timer?.invalidate()
-        self.timer = nil
+        timer?.invalidate()
+        timer = nil
     }
-    
 }
