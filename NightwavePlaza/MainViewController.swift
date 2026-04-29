@@ -12,7 +12,7 @@ import WebKit
 import SafariServices
 import Combine
 
-class WebViewController: UIViewController, WKNavigationDelegate {
+class MainViewController: UIViewController, WKNavigationDelegate {
     
     let backgroundView = BackgroundView()
     lazy var webView: WKWebView = {
@@ -169,7 +169,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
 }
 
-extension WebViewController: WebViewCallback {
+extension MainViewController: WebViewCallback {
     
     func onOpenDrawer() {
         startMenuHandler.show()

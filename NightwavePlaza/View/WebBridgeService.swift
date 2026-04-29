@@ -10,7 +10,7 @@ import Foundation
 @preconcurrency import WebKit
 
 class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
-    weak var viewController: WebViewController?
+    weak var viewController: MainViewController?
     private var playerService: PlayerService!
     private var sleepTimer: SleepTimerService!
     
@@ -24,7 +24,7 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
     func setup(
         configuration: WKWebViewConfiguration,
         playerService: PlayerService,
-        viewController: WebViewController
+        viewController: MainViewController
     ) {
         self.playerService = playerService        
         self.viewController = viewController
