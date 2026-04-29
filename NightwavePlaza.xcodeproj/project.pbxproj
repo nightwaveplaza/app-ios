@@ -17,8 +17,10 @@
 		114CF40E2F9CFAA600DB1D6B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF40B2F9CFAA600DB1D6B /* Settings.swift */; };
 		114CF4132F9D0A7000DB1D6B /* WebViewCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF4122F9D0A6C00DB1D6B /* WebViewCallback.swift */; };
 		11768DEE2FA0419C003FAE2D /* WebApp in Resources */ = {isa = PBXBuildFile; fileRef = 11768DED2FA04196003FAE2D /* WebApp */; };
-		11768DF02FA04379003FAE2D /* LocalSchemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DEF2FA04374003FAE2D /* LocalSchemeLoader.swift */; };
 		11768DF42FA04C44003FAE2D /* SleepTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DF32FA04C44003FAE2D /* SleepTimerService.swift */; };
+		11768DFA2FA1A25A003FAE2D /* String+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DF92FA1A258003FAE2D /* String+Color.swift */; };
+		11768DFD2FA1A61D003FAE2D /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 11768DFC2FA1A61D003FAE2D /* Swifter */; };
+		11768DFF2FA1A62F003FAE2D /* LocalWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DFE2FA1A62A003FAE2D /* LocalWebServer.swift */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD602479B56100C58CFE /* Assets.xcassets */; };
 		FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD622479B56100C58CFE /* LaunchScreen.storyboard */; };
@@ -55,8 +57,9 @@
 		114CF40B2F9CFAA600DB1D6B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		114CF4122F9D0A6C00DB1D6B /* WebViewCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewCallback.swift; sourceTree = "<group>"; };
 		11768DED2FA04196003FAE2D /* WebApp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WebApp; sourceTree = "<group>"; };
-		11768DEF2FA04374003FAE2D /* LocalSchemeLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSchemeLoader.swift; sourceTree = "<group>"; };
 		11768DF32FA04C44003FAE2D /* SleepTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerService.swift; sourceTree = "<group>"; };
+		11768DF92FA1A258003FAE2D /* String+Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Color.swift"; sourceTree = "<group>"; };
+		11768DFE2FA1A62A003FAE2D /* LocalWebServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWebServer.swift; sourceTree = "<group>"; };
 		FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nightwave Plaza.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA0FFD572479B55F00C58CFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA0FFD602479B56100C58CFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -83,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11768DFD2FA1A61D003FAE2D /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +112,6 @@
 		114CF4112F9D0A6200DB1D6B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				11768DEF2FA04374003FAE2D /* LocalSchemeLoader.swift */,
 				11304CD82F9EF2EE00B3CBE0 /* WKWebView+Ext.swift */,
 				114CF4122F9D0A6C00DB1D6B /* WebViewCallback.swift */,
 				FA2D1DAB24E8873F00EE0556 /* WebBridgeService.swift */,
@@ -123,6 +126,14 @@
 				FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */,
 			);
 			path = Background;
+			sourceTree = "<group>";
+		};
+		11768DF62FA1A1C7003FAE2D /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				11768DF92FA1A258003FAE2D /* String+Color.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		B2348EC994803B27A77EBFB5 /* Network */ = {
@@ -156,6 +167,7 @@
 		FA0FFD562479B55F00C58CFE /* NightwavePlaza */ = {
 			isa = PBXGroup;
 			children = (
+				11768DED2FA04196003FAE2D /* WebApp */,
 				FA6E52F4251FCADA00622119 /* Nightwave Plaza.entitlements */,
 				FA0FFD652479B56100C58CFE /* Info.plist */,
 				FAC43AA124D6AB300073341F /* Web.storyboard */,
@@ -168,8 +180,8 @@
 				114CF40C2F9CFAA600DB1D6B /* Preferences */,
 				FAE41EF8247A85B90076D927 /* Services */,
 				FAB2E1722504F74F0026C008 /* Start Menu */,
+				11768DF62FA1A1C7003FAE2D /* Utils */,
 				114CF4112F9D0A6200DB1D6B /* View */,
-				11768DED2FA04196003FAE2D /* WebApp */,
 			);
 			path = NightwavePlaza;
 			sourceTree = "<group>";
@@ -217,6 +229,7 @@
 				11768DF32FA04C44003FAE2D /* SleepTimerService.swift */,
 				11304CDC2F9F1CCD00B3CBE0 /* MetadataSyncManager.swift */,
 				11304CDA2F9F051500B3CBE0 /* PlayerService.swift */,
+				11768DFE2FA1A62A003FAE2D /* LocalWebServer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -300,6 +313,7 @@
 			);
 			mainGroup = FA0FFD4B2479B55F00C58CFE;
 			packageReferences = (
+				11768DFB2FA1A61D003FAE2D /* XCRemoteSwiftPackageReference "swifter" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA0FFD552479B55F00C58CFE /* Products */;
@@ -343,7 +357,6 @@
 				114CF40D2F9CFAA600DB1D6B /* AppPreference.swift in Sources */,
 				114CF40E2F9CFAA600DB1D6B /* Settings.swift in Sources */,
 				114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */,
-				11768DF02FA04379003FAE2D /* LocalSchemeLoader.swift in Sources */,
 				114CF4132F9D0A7000DB1D6B /* WebViewCallback.swift in Sources */,
 				FAB2E1742504F7620026C008 /* StartMenuHandler.swift in Sources */,
 				114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */,
@@ -355,9 +368,11 @@
 				FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */,
 				FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */,
 				114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */,
+				11768DFA2FA1A25A003FAE2D /* String+Color.swift in Sources */,
 				11304CD92F9EF2F500B3CBE0 /* WKWebView+Ext.swift in Sources */,
 				11304CDB2F9F051900B3CBE0 /* PlayerService.swift in Sources */,
 				FAC43AA424D6AB520073341F /* MainViewController.swift in Sources */,
+				11768DFF2FA1A62F003FAE2D /* LocalWebServer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -643,6 +658,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		11768DFB2FA1A61D003FAE2D /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		11768DFC2FA1A61D003FAE2D /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11768DFB2FA1A61D003FAE2D /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FA0FFD4C2479B55F00C58CFE /* Project object */;
 }
