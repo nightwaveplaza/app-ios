@@ -11,6 +11,7 @@ import Foundation
 
 class StartMenuView: UIView {
     
+    // MARK: - Layout Constants
     let itemHeight: CGFloat = 44.0
     let itemSeparator: CGFloat = 1
     let fontSize: CGFloat = 14
@@ -21,13 +22,19 @@ class StartMenuView: UIView {
     let headerFontSize: CGFloat = 16
     let headerLeftPadding: CGFloat = 6
     
+    // MARK: - Properties
     var onClick: ((_ item: StartMenuItem) -> Void)?
     
     private let stackView = UIStackView()
     
+    // MARK: - Setup
+        
+    // Initializes the main layout of the menu, positioning the vertical stack for items
+    // and the rotated header view on the left edge
     func setup(items: [StartMenuItem], viewController: UIViewController) {
         self.backgroundColor = UIColor(named: "StartBackground")
         
+        // Calculates the bottom safe area to prevent menu items from overlapping the Home Indicator
         let bottomInset = viewController.view.safeAreaInsets.bottom
         let width = menuWidth
         
@@ -60,6 +67,10 @@ class StartMenuView: UIView {
         ])
     }
     
+    // MARK: - Content Updates
+        
+    // Clears the current menu stack and rebuilds it with new items
+    // This ensures no duplicate or stale views remain in the view hierarchy
     func updateItems(_ items: [StartMenuItem]) {
         stackView.arrangedSubviews.forEach {
             stackView.removeArrangedSubview($0)
@@ -72,6 +83,9 @@ class StartMenuView: UIView {
         }
     }
     
+    // MARK: - UI Builders
+        
+    // Constructs a clickable row for a given menu item, positioning its icon and title.
     func createViewForItem(_ item: StartMenuItem) -> UIControl {
         let control = UIControl()
         control.translatesAutoresizingMaskIntoConstraints = false
@@ -101,6 +115,7 @@ class StartMenuView: UIView {
             label.trailingAnchor.constraint(equalTo: control.trailingAnchor, constant: -iconPadding)
         ])
         
+        // Conditionally appends a visual divider at the bottom of specific group items
         if item.hasBottomLine {
             let separator = UIView()
             separator.backgroundColor = UIColor(named: "StartDivider")
@@ -115,6 +130,7 @@ class StartMenuView: UIView {
             ])
         }
         
+        // Binds the row selection to the parent's onClick router
         let action = UIAction { [weak self] _ in
             self?.onClick?(item)
         }
@@ -123,6 +139,7 @@ class StartMenuView: UIView {
         return control
     }
     
+    // Initializes the decorative side header with the app's title
     func createTitleView(leftInset: CGFloat) -> UIView {
         let view = StartMenuHeaderView()
         view.fontSize = self.headerFontSize

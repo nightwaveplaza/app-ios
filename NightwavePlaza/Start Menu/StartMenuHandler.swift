@@ -11,15 +11,21 @@ import Foundation
 
 class StartMenuHandler {
     
+    // MARK: - Properties
+    
     weak var viewController: UIViewController?
     var view: StartMenuView?
     let darkView = UIView()
     var leftConstraint: NSLayoutConstraint?
+    private var animator: UIViewPropertyAnimator?
     
     var isMenuOpened = false
     var openMenuGesture: UIPanGestureRecognizer!
     var onSelect: ((_ action: String) -> Void)?
     
+    // MARK: - Initialization
+        
+    // Binds the handler to the host view controller and attaches the global pan gesture for edge swiping
     func setup(inViewController viewController: UIViewController, onSelect block: @escaping (_ action: String) -> Void) {
         self.viewController = viewController
         openMenuGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
@@ -27,6 +33,9 @@ class StartMenuHandler {
         self.onSelect = block
     }
     
+    // MARK: - Layout Configuration
+        
+    // Lazily constructs the side menu hierarchy on first presentation to optimize initial memory footprint
     func setupMenuIfNeeded() {
         guard view == nil, let vc = viewController else { return }
 
@@ -59,10 +68,12 @@ class StartMenuHandler {
             left
         ])
         
+        // Forces initial layout off-screen before any animations begin to prevent visual tearing
         vc.view.layoutIfNeeded()
         leftConstraint?.constant = -menuView.bounds.size.width
         vc.view.layoutIfNeeded()
         
+        // Binds the background overlay tap to dismiss the menu
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissMenu))
         darkView.addGestureRecognizer(tapGesture)
         
@@ -74,11 +85,13 @@ class StartMenuHandler {
         UIView.setAnimationsEnabled(true)
     }
     
+    // Re-injects the menu dataset to apply localized strings without tearing down the entire view hierarchy
     func reloadLanguage() {
         let newItems = self.menuItems()
         self.view?.updateItems(newItems)
     }
     
+    // Defines the routing payload and visual configuration for the drawer items
     func menuItems() -> [StartMenuItem] {
         return [
             StartMenuItem(icon: UIImage(named: "ic_ratings"), title: "Ratings".localized, targetAction: "ratings", hasBottomLine: false),
@@ -91,6 +104,9 @@ class StartMenuHandler {
         ]
     }
     
+    // MARK: - Visibility Control
+        
+    // Triggers the programmatic presentation of the drawer, animating both the translation and background dimming
     func show() {
         setupMenuIfNeeded()
         guard let vc = viewController, let menuView = view else { return }
@@ -111,7 +127,7 @@ class StartMenuHandler {
         })
     }
     
-    @objc func dismissMenu() { // Добавлен @objc для доступа из UITapGestureRecognizer
+    @objc func dismissMenu() {
         guard let vc = viewController, let menuView = view else { return }
         
         vc.view.layoutIfNeeded()
@@ -127,6 +143,7 @@ class StartMenuHandler {
         })
     }
         
+    // Pre-calculates positions for the property animator during an interactive drag.
     func toggleMenu() {
         guard let menuView = view else { return }
         if isMenuOpened {
@@ -141,6 +158,7 @@ class StartMenuHandler {
         }
     }
     
+    // Enforces the correct visual layout constraints after an interrupted gesture or state change
     func updateForCurrentState() {
         setupMenuIfNeeded()
         guard let vc = viewController, let menuView = view else { return }
@@ -158,17 +176,24 @@ class StartMenuHandler {
         menuView.superview?.layoutIfNeeded()
     }
     
-    private var animator: UIViewPropertyAnimator?
 
+    // MARK: - Interactive Gestures
+        
+    // Drives the interactive swipe physics using a property animator.
+    // Correlates the user's touch translation directly to the animation completion fraction.
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
         guard let menuView = view else { return }
         
         switch recognizer.state {
         case .began:
             var shouldCancel = false
+            
+            // Prevents opening the menu if the swipe didn't originate from the left screen edge
             if !isMenuOpened && recognizer.location(in: recognizer.view).x > 50 {
                 shouldCancel = true
             }
+            
+            // Blocks overlapping animations if the user rapidly swipes multiple times
             if animator != nil {
                 shouldCancel = true
             }
@@ -177,7 +202,10 @@ class StartMenuHandler {
                 recognizer.isEnabled = true
                 break
             }
+            
             updateForCurrentState()
+            
+            // Initializes the interruptible animation state machine
             animator = UIViewPropertyAnimator(duration: 0.5, curve: .easeOut, animations: { [weak self] in
                 self?.toggleMenu()
             })
@@ -193,11 +221,14 @@ class StartMenuHandler {
             
         case .ended:
             guard let animator = animator else { return }
+            
+            // Commits or reverts the animation based on distance threshold (30%)
             animator.isReversed = animator.fractionComplete < 0.3
             animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
             
             animator.addCompletion { [weak self] _ in
                 guard let self = self else { return }
+                // Safe unwrap to prevent a crash if the animator is deallocated early
                 if !self.animator!.isReversed {
                     self.isMenuOpened.toggle()
                 }
@@ -205,7 +236,7 @@ class StartMenuHandler {
                 self.animator = nil
             }
             
-        @unknown default:
+        default:
             break
         }
     }
