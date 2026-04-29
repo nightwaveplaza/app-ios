@@ -11,7 +11,7 @@ protocol WebViewCallback: AnyObject {
     func onPlayAudio()
     func onSetBackground(src: String)
     func onToggleFullscreen()
-    func onSetSleepTimer(time: Int)
+    func onSetSleepTimer(time: Double)
     func onSetLanguage(lang: String)
     func onReady()
     func onSetThemeColor(color: String)

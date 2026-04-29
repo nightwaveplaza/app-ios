@@ -7,6 +7,7 @@
 //
 
 import UIKit
+@preconcurrency
 import WebKit
 import SafariServices
 import Combine
@@ -22,16 +23,19 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }()
     
     private let playerService: PlayerService
+    private let sleepTimerService: SleepTimerService
     private var startMenuHandler = StartMenuHandler()
     private var cancellables = Set<AnyCancellable>()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        self.playerService = PlayerService();
+        self.playerService = PlayerService()
+        self.sleepTimerService = SleepTimerService(playerService: playerService)
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     required init?(coder: NSCoder) {
-        self.playerService = PlayerService();
+        self.playerService = PlayerService()
+        self.sleepTimerService = SleepTimerService(playerService: playerService)
         super.init(coder: coder)
     }
     
@@ -55,6 +59,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        view.backgroundColor = UIColor(named: "BackgroundTeal")
         
         // register callbacks
         let webBridge = WebBridgeService(callback: self)
@@ -158,16 +164,8 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     private func handleMenuAction(_ action: String) {
-        let windowToOpen: String
         print(action)
-        
-        if (action == "user-favorites" || action == "user") && Settings.userToken.isEmpty {
-            windowToOpen = "user-login"
-        } else {
-            windowToOpen = action
-        }
-        
-        webView.emitEvent(action: "window:open", payload: windowToOpen)
+        webView.emitEvent(action: "window:open", payload: action)
     }
 }
 
@@ -201,8 +199,8 @@ extension WebViewController: WebViewCallback {
         }
     }
     
-    func onSetSleepTimer(time: Int) {
-//        sleepTimer.sleepAfter(minutes: Double(time))
+    func onSetSleepTimer(time: Double) {
+        sleepTimerService.sleepAt(timestamp: time)
     }
     
     func onSetLanguage(lang: String) {

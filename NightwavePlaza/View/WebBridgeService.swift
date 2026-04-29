@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import WebKit
+@preconcurrency import WebKit
 
 class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
     weak var viewController: WebViewController?
@@ -26,12 +26,7 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
         playerService: PlayerService,
         viewController: WebViewController
     ) {
-        self.playerService = playerService
-        //self.sleepTimer = SleepTimerService(playback: self.playback)
-//        self.sleepTimer.onSleep = { [unowned self] in
-//            self.sendCurrentStatus()
-//        }
-        
+        self.playerService = playerService        
         self.viewController = viewController
         
         configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "ios_app")
@@ -78,7 +73,7 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
                 replyHandler(nil, nil)
                 
             case "setSleepTimer":
-                if let time = args.first as? Int {
+                if let time = args.first as? Double {
                     callback?.onSetSleepTimer(time: time)
                 }
                 replyHandler(nil, nil)
@@ -93,7 +88,6 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
                 replyHandler(nil, nil)
                 
             case "getAppVersion":
-                // Аналог BuildConfig.VERSION_NAME и VERSION_CODE
                 let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
                 let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
                 replyHandler("\(version) (build \(build))", nil)
