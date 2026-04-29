@@ -21,6 +21,9 @@
 		11768DFA2FA1A25A003FAE2D /* String+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DF92FA1A258003FAE2D /* String+Color.swift */; };
 		11768DFD2FA1A61D003FAE2D /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = 11768DFC2FA1A61D003FAE2D /* Swifter */; };
 		11768DFF2FA1A62F003FAE2D /* LocalWebServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DFE2FA1A62A003FAE2D /* LocalWebServer.swift */; };
+		11768E032FA1BB89003FAE2D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 11768E022FA1BB89003FAE2D /* Localizable.xcstrings */; };
+		11768E0E2FA1BF08003FAE2D /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */; };
+		11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD602479B56100C58CFE /* Assets.xcassets */; };
 		FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD622479B56100C58CFE /* LaunchScreen.storyboard */; };
@@ -60,6 +63,9 @@
 		11768DF32FA04C44003FAE2D /* SleepTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepTimerService.swift; sourceTree = "<group>"; };
 		11768DF92FA1A258003FAE2D /* String+Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Color.swift"; sourceTree = "<group>"; };
 		11768DFE2FA1A62A003FAE2D /* LocalWebServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWebServer.swift; sourceTree = "<group>"; };
+		11768E022FA1BB89003FAE2D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Localized.swift"; sourceTree = "<group>"; };
 		FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nightwave Plaza.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA0FFD572479B55F00C58CFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA0FFD602479B56100C58CFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -131,6 +137,8 @@
 		11768DF62FA1A1C7003FAE2D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */,
+				11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */,
 				11768DF92FA1A258003FAE2D /* String+Color.swift */,
 			);
 			path = Utils;
@@ -149,6 +157,7 @@
 		FA0FFD4B2479B55F00C58CFE = {
 			isa = PBXGroup;
 			children = (
+				11768E022FA1BB89003FAE2D /* Localizable.xcstrings */,
 				FA0FFD562479B55F00C58CFE /* NightwavePlaza */,
 				FA0FFD6D2479B56100C58CFE /* NightwavePlazaTests */,
 				FA0FFD552479B55F00C58CFE /* Products */,
@@ -310,6 +319,14 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
+				es,
+				it,
+				ca,
+				"zh-Hant",
+				de,
+				"pt-BR",
+				ja,
 			);
 			mainGroup = FA0FFD4B2479B55F00C58CFE;
 			packageReferences = (
@@ -332,6 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */,
+				11768E032FA1BB89003FAE2D /* Localizable.xcstrings in Resources */,
 				11768DEE2FA0419C003FAE2D /* WebApp in Resources */,
 				FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */,
 				FAC43AA224D6AB300073341F /* Web.storyboard in Resources */,
@@ -359,6 +377,7 @@
 				114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */,
 				114CF4132F9D0A7000DB1D6B /* WebViewCallback.swift in Sources */,
 				FAB2E1742504F7620026C008 /* StartMenuHandler.swift in Sources */,
+				11768E0E2FA1BF08003FAE2D /* LanguageManager.swift in Sources */,
 				114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */,
 				FAB2E1762504F8840026C008 /* StartMenuItem.swift in Sources */,
 				11304CDD2F9F1CD200B3CBE0 /* MetadataSyncManager.swift in Sources */,
@@ -366,6 +385,7 @@
 				FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */,
 				11768DF42FA04C44003FAE2D /* SleepTimerService.swift in Sources */,
 				FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */,
+				11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */,
 				FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */,
 				114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */,
 				11768DFA2FA1A25A003FAE2D /* String+Color.swift in Sources */,
@@ -411,6 +431,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -465,6 +486,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -474,6 +496,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -521,6 +544,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};

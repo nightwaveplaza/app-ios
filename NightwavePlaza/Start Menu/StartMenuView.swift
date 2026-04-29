@@ -23,6 +23,8 @@ class StartMenuView: UIView {
     
     var onClick: ((_ item: StartMenuItem) -> Void)?
     
+    private let stackView = UIStackView()
+    
     func setup(items: [StartMenuItem], viewController: UIViewController) {
         self.backgroundColor = UIColor(named: "StartBackground")
         
@@ -31,16 +33,12 @@ class StartMenuView: UIView {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         
-        let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(stackView)
         
-        for item in items {
-            let itemView = self.createViewForItem(item)
-            stackView.addArrangedSubview(itemView)
-        }
+        self.updateItems(items)
         
         let titleView = self.createTitleView(leftInset: bottomInset)
         titleView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,6 +58,18 @@ class StartMenuView: UIView {
 
             stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -bottomInset)
         ])
+    }
+    
+    func updateItems(_ items: [StartMenuItem]) {
+        stackView.arrangedSubviews.forEach {
+            stackView.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        
+        for item in items {
+            let itemView = self.createViewForItem(item)
+            stackView.addArrangedSubview(itemView)
+        }
     }
     
     func createViewForItem(_ item: StartMenuItem) -> UIControl {

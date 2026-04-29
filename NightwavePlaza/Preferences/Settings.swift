@@ -28,12 +28,15 @@ enum Settings {
     @AppPreference(key: "ThemeColor", defaultValue: "#c0c0c0")
     static var themeColor: String
     
-    #if DEBUG
-    static let isDevChannelDefault = true
-    #else
-    static let isDevChannelDefault = false
-    #endif
+    @AppPreference(key: "Language", defaultValue: defaultLanguage)
+    static var language: String
     
-    @AppPreference(key: "DevChannel", defaultValue: isDevChannelDefault)
-    static var useDevChannel: Bool
+    // Get default language
+    static var defaultLanguage: String {
+        if #available(iOS 16, *) {
+            return Locale.current.language.languageCode?.identifier ?? "en"
+        } else {
+            return Locale.current.languageCode ?? "en"
+        }
+    }
 }

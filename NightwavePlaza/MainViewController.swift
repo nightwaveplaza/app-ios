@@ -81,6 +81,8 @@ class MainViewController: UIViewController {
         
         self.setupWebView()
         setupController()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(languageDidUpdate), name: .languageChanged, object: nil)
     }
     
     // MARK: - Setup & Configuration
@@ -142,6 +144,12 @@ class MainViewController: UIViewController {
     private func handleMenuAction(_ action: String) {
         print(action)
         webView.emitEvent(action: "window:open", payload: action)
+    }
+    
+    @objc private func languageDidUpdate() {
+        DispatchQueue.main.async { [weak self] in
+            self?.startMenuHandler.reloadLanguage()
+        }
     }
 }
 
@@ -240,7 +248,7 @@ extension MainViewController: WebViewCallback {
     }
     
     func onSetLanguage(lang: String) {
-        //Settings.language = lang
+        LanguageManager.setLanguage(lang)
     }
     
     func onReady() {

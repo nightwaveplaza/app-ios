@@ -74,15 +74,20 @@ class StartMenuHandler {
         UIView.setAnimationsEnabled(true)
     }
     
+    func reloadLanguage() {
+        let newItems = self.menuItems()
+        self.view?.updateItems(newItems)
+    }
+    
     func menuItems() -> [StartMenuItem] {
         return [
-            StartMenuItem(icon: UIImage(named: "ic_ratings"), title: "Ratings", targetAction: "ratings", hasBottomLine: false),
-            StartMenuItem(icon: UIImage(named: "ic_history"), title: "Play History", targetAction: "history", hasBottomLine: true),
-            StartMenuItem(icon: UIImage(named: "ic_favorites"), title: "My Favorites", targetAction: "user-favorites", hasBottomLine: false),
-            StartMenuItem(icon: UIImage(named: "ic_profile"), title: "My Profile", targetAction: "user", hasBottomLine: true),
-            StartMenuItem(icon: UIImage(named: "ic_settings"), title: "Settings", targetAction: "settings", hasBottomLine: false),
-            StartMenuItem(icon: UIImage(named: "ic_help"), title: "About", targetAction: "about", hasBottomLine: false),
-            StartMenuItem(icon: UIImage(named: "ic_launcher"), title: "Support", targetAction: "support", hasBottomLine: true)
+            StartMenuItem(icon: UIImage(named: "ic_ratings"), title: "Ratings".localized, targetAction: "ratings", hasBottomLine: false),
+            StartMenuItem(icon: UIImage(named: "ic_history"), title: "Play History".localized, targetAction: "history", hasBottomLine: true),
+            StartMenuItem(icon: UIImage(named: "ic_favorites"), title: "My Favorites".localized, targetAction: "user-favorites", hasBottomLine: false),
+            StartMenuItem(icon: UIImage(named: "ic_profile"), title: "My Profile".localized, targetAction: "user", hasBottomLine: true),
+            StartMenuItem(icon: UIImage(named: "ic_settings"), title: "Settings".localized, targetAction: "settings", hasBottomLine: false),
+            StartMenuItem(icon: UIImage(named: "ic_help"), title: "About".localized, targetAction: "about", hasBottomLine: false),
+            StartMenuItem(icon: UIImage(named: "ic_launcher"), title: "Support Us".localized, targetAction: "support", hasBottomLine: true)
         ]
     }
     
