@@ -13,6 +13,8 @@ import Combine
 import Network
 
 class PlayerService: NSObject {
+    static let shared = PlayerService()
+    
     // MARK: - State
     let playbackRate = CurrentValueSubject<Float, Never>(0)
     @Published var isPlaying: Bool = false

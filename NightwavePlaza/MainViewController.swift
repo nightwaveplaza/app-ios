@@ -24,26 +24,11 @@ class MainViewController: UIViewController {
     }()
     
     // MARK: - Dependencies & State
-    private let playerService: PlayerService
-    private let sleepTimerService: SleepTimerService
+    private let playerService = PlayerService.shared
+    private let sleepTimerService = SleepTimerService.shared
     private var startMenuHandler = StartMenuHandler()
     private var cancellables = Set<AnyCancellable>()
-    
-    // MARK: - Initialization
-    
-    // Core application services are instantiated early to ensure playback
-    // and background timer logic are ready before the visual layer mounts
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        self.playerService = PlayerService()
-        self.sleepTimerService = SleepTimerService(playerService: playerService)
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    required init?(coder: NSCoder) {
-        self.playerService = PlayerService()
-        self.sleepTimerService = SleepTimerService(playerService: playerService)
-        super.init(coder: coder)
-    }
+       
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -122,7 +107,7 @@ class MainViewController: UIViewController {
         
         LocalWebServer.shared.start()
                 
-        if let url = URL(string: "http://localapp.plaza.one:8080") {
+        if let url = URL(string: "http://127.0.0.1:8080") {
             webView.load(URLRequest(url: url))
         }
     }
@@ -179,7 +164,7 @@ extension MainViewController: WKNavigationDelegate {
         }
         
         // Explicitly whitelist internal API communication
-        if url.host == "plaza.int" || url.host == "localapp.plaza.one" {
+        if url.host == "plaza.int" || url.host == "127.0.0.1" {
             decisionHandler(.allow)
             return
         }
@@ -229,7 +214,7 @@ extension MainViewController: WebViewCallback {
     
     func onSetBackground(src: String) {
         if src == "solid" {
-            backgroundView.setSolid()
+            backgroundView.clearVideo()
         } else if let url = URL(string: src) {
             backgroundView.setUrl(url: url)
         }
@@ -244,7 +229,7 @@ extension MainViewController: WebViewCallback {
     }
     
     func onSetSleepTimer(time: Double) {
-        sleepTimerService.sleepAt(timestamp: time)
+        //sleepTimerService.sleepAt(timestamp: time)
     }
     
     func onSetLanguage(lang: String) {

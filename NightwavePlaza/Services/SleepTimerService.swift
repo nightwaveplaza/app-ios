@@ -11,16 +11,16 @@ import Foundation
 import Combine
 
 final class SleepTimerService {
+    static let shared = SleepTimerService()
     
     private var cancellables = Set<AnyCancellable>()
     private var timer: Timer?
     
-    private let playerService: PlayerService
+    private let playerService = PlayerService.shared
     
     var onSleep: (() -> Void)?
     
-    init(playerService: PlayerService) {
-        self.playerService = playerService
+    init() {
         setupObservers()
     }
     
