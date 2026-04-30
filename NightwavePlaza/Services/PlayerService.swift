@@ -124,7 +124,6 @@ class PlayerService: NSObject {
                 guard let self = self else { return }
                 
                 self.playbackRate.send(rate)
-                Settings.isPlaying = (rate > 0)
                 
                 // Keep the lockscreen progress bar in sync with actual playback (e.g. pausing)
                 Task {

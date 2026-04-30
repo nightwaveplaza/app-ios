@@ -9,9 +9,6 @@
 import Foundation
 
 enum Settings {
-    
-    @AppPreference(key: "IsPlaying", defaultValue: false)
-    static var isPlaying: Bool
 
     @AppPreference(key: "sleepTargetTimer", defaultValue: 0)
     static var sleepTargetTime: Int
