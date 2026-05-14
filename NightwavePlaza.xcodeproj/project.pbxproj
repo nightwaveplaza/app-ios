@@ -30,10 +30,6 @@
 		FA0FFD6F2479B56100C58CFE /* NightwavePlazaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD6E2479B56100C58CFE /* NightwavePlazaTests.swift */; };
 		FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2D1DAB24E8873F00EE0556 /* WebBridgeService.swift */; };
 		FA75265625052E8B00C649BC /* BackgroundCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */; };
-		FAB2E1742504F7620026C008 /* StartMenuHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E1732504F7620026C008 /* StartMenuHandler.swift */; };
-		FAB2E1762504F8840026C008 /* StartMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E1752504F8840026C008 /* StartMenuItem.swift */; };
-		FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E1772504F8920026C008 /* StartMenuView.swift */; };
-		FAB2E17F25050B8C0026C008 /* StartMenuHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB2E17E25050B8C0026C008 /* StartMenuHeaderView.swift */; };
 		FAC43AA224D6AB300073341F /* Web.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FAC43AA124D6AB300073341F /* Web.storyboard */; };
 		FAC43AA424D6AB520073341F /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC43AA324D6AB520073341F /* MainViewController.swift */; };
 		FAE41F05247ACFA90076D927 /* BackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAE41F04247ACFA90076D927 /* BackgroundView.swift */; };
@@ -79,10 +75,6 @@
 		FA6E52F4251FCADA00622119 /* Nightwave Plaza.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Nightwave Plaza.entitlements"; sourceTree = "<group>"; };
 		FA7069BE247A6ABB00AFBD61 /* NightwavePlaza-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NightwavePlaza-Bridging-Header.h"; sourceTree = "<group>"; };
 		FA75265525052E8B00C649BC /* BackgroundCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundCacheManager.swift; sourceTree = "<group>"; };
-		FAB2E1732504F7620026C008 /* StartMenuHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuHandler.swift; sourceTree = "<group>"; };
-		FAB2E1752504F8840026C008 /* StartMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuItem.swift; sourceTree = "<group>"; };
-		FAB2E1772504F8920026C008 /* StartMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuView.swift; sourceTree = "<group>"; };
-		FAB2E17E25050B8C0026C008 /* StartMenuHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartMenuHeaderView.swift; sourceTree = "<group>"; };
 		FAC43AA124D6AB300073341F /* Web.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Web.storyboard; sourceTree = "<group>"; };
 		FAC43AA324D6AB520073341F /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		FAE41F04247ACFA90076D927 /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -189,7 +181,6 @@
 				B2348EC994803B27A77EBFB5 /* Network */,
 				114CF40C2F9CFAA600DB1D6B /* Preferences */,
 				FAE41EF8247A85B90076D927 /* Services */,
-				FAB2E1722504F74F0026C008 /* Start Menu */,
 				11768DF62FA1A1C7003FAE2D /* Utils */,
 				114CF4112F9D0A6200DB1D6B /* View */,
 			);
@@ -220,17 +211,6 @@
 				114CF3FC2F9CF73900DB1D6B /* Status.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		FAB2E1722504F74F0026C008 /* Start Menu */ = {
-			isa = PBXGroup;
-			children = (
-				FAB2E1732504F7620026C008 /* StartMenuHandler.swift */,
-				FAB2E1752504F8840026C008 /* StartMenuItem.swift */,
-				FAB2E1772504F8920026C008 /* StartMenuView.swift */,
-				FAB2E17E25050B8C0026C008 /* StartMenuHeaderView.swift */,
-			);
-			path = "Start Menu";
 			sourceTree = "<group>";
 		};
 		FAE41EF8247A85B90076D927 /* Services */ = {
@@ -378,15 +358,11 @@
 				114CF40E2F9CFAA600DB1D6B /* Settings.swift in Sources */,
 				114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */,
 				114CF4132F9D0A7000DB1D6B /* WebViewCallback.swift in Sources */,
-				FAB2E1742504F7620026C008 /* StartMenuHandler.swift in Sources */,
 				11768E0E2FA1BF08003FAE2D /* LanguageManager.swift in Sources */,
 				114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */,
-				FAB2E1762504F8840026C008 /* StartMenuItem.swift in Sources */,
 				11304CDD2F9F1CD200B3CBE0 /* MetadataSyncManager.swift in Sources */,
-				FAB2E17F25050B8C0026C008 /* StartMenuHeaderView.swift in Sources */,
 				FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */,
 				11768DF42FA04C44003FAE2D /* SleepTimerService.swift in Sources */,
-				FAB2E1782504F8920026C008 /* StartMenuView.swift in Sources */,
 				11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */,
 				FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */,
 				114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */,

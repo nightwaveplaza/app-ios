@@ -7,7 +7,6 @@
 //
 
 protocol WebViewCallback: AnyObject {
-    func onOpenDrawer()
     func onPlayAudio()
     func onSetBackground(src: String)
     func onToggleFullscreen()

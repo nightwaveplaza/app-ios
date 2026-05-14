@@ -26,7 +26,6 @@ class MainViewController: UIViewController {
     // MARK: - Dependencies & State
     private let playerService = PlayerService.shared
     private let sleepTimerService = SleepTimerService.shared
-    private var startMenuHandler = StartMenuHandler()
     private var cancellables = Set<AnyCancellable>()
        
     
@@ -60,14 +59,8 @@ class MainViewController: UIViewController {
         let webBridge = WebBridgeService(callback: self)
         webBridge.setup(configuration: webView.configuration, playerService: playerService, viewController: self)
         
-        startMenuHandler.setup(inViewController: self) { [weak self] action in
-            self?.handleMenuAction(action)
-        }
-        
         self.setupWebView()
         setupController()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(languageDidUpdate), name: .languageChanged, object: nil)
     }
     
     // MARK: - Setup & Configuration
@@ -123,18 +116,6 @@ class MainViewController: UIViewController {
     
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .slide
-    }
-    
-    // MARK: - Helpers
-    private func handleMenuAction(_ action: String) {
-        print(action)
-        webView.emitEvent(action: "window:open", payload: action)
-    }
-    
-    @objc private func languageDidUpdate() {
-        DispatchQueue.main.async { [weak self] in
-            self?.startMenuHandler.reloadLanguage()
-        }
     }
 }
 
@@ -198,11 +179,6 @@ extension MainViewController: WKNavigationDelegate {
 
 // Routes abstracted interactions from the JS layer to native implementations.
 extension MainViewController: WebViewCallback {
-    
-    func onOpenDrawer() {
-        startMenuHandler.show()
-    }
-    
     func onPlayAudio() {
         if (playerService.isPlaying) {
             playerService.pause()

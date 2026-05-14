@@ -43,11 +43,7 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
         
         print(method)
         
-        switch method {
-            case "openDrawer":
-                callback?.onOpenDrawer()
-                replyHandler(nil, nil)
-                
+        switch method {                
             case "playAudio":
                 callback?.onPlayAudio()
                 replyHandler(nil, nil)
