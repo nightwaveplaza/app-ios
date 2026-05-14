@@ -18,6 +18,7 @@ class PlayerService: NSObject {
     // MARK: - State
     let playbackRate = CurrentValueSubject<Float, Never>(0)
     @Published var isPlaying: Bool = false
+    @Published var isBuffering: Bool = false
     private var userIntentToPlay: Bool = false
     
     // MARK: - Core Components
@@ -50,7 +51,6 @@ class PlayerService: NSObject {
         observeNetworkChanges()
         observePlayerState()
         
-        setupPlayerItem()
         setupPlayerObservation()
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleInterruption), name: AVAudioSession.interruptionNotification, object: nil)
@@ -59,7 +59,9 @@ class PlayerService: NSObject {
     private func setupPlayerObservation() {
         // Keep internal playing state in sync with the actual audio engine
         timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] player, _ in
-            self?.isPlaying = (player.timeControlStatus == .playing)
+            guard let self = self else { return }
+            self.isPlaying = (player.timeControlStatus == .playing)
+            self.isBuffering = (player.timeControlStatus == .waitingToPlayAtSpecifiedRate)
         }
     }
     
@@ -68,8 +70,8 @@ class PlayerService: NSObject {
         userIntentToPlay = true
         
         // Recover playback if the stream chunk failed (e.g. after a long pause or network drop)
-        if player.currentItem?.status == .failed || player.status == .failed {
-           setupPlayerItem()
+        if player.currentItem == nil || player.currentItem?.status == .failed || player.status == .failed {
+            setupPlayerItem()
         }
         
         player.play()
@@ -78,6 +80,7 @@ class PlayerService: NSObject {
     func pause() {
         userIntentToPlay = false
         player.pause()
+        player.replaceCurrentItem(with: nil)
     }
     
     // MARK: - Core Playback & Quality

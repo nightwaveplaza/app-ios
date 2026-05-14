@@ -74,11 +74,25 @@ class MainViewController: UIViewController {
             self?.pushPlaybackState(isPlaying: isPlaying)
         }
         .store(in: &cancellables)
+        
+        playerService.$isBuffering
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] isBuffering in
+            self?.pushBufferingState(isBuffering: isBuffering)
+        }
+        .store(in: &cancellables)
     }
     
     private func pushPlaybackState(isPlaying: Bool) {
         print("Playback state: ", isPlaying)
         webView.emitEvent(action: "player:playing", payload: isPlaying)
+    }
+    
+    private func pushBufferingState(isBuffering: Bool) {
+        print("Buffering state: ", isBuffering)
+        if (isBuffering) {
+            webView.emitEvent(action: "player:buffering")
+        }
     }
     
     
@@ -183,7 +197,6 @@ extension MainViewController: WebViewCallback {
         if (playerService.isPlaying) {
             playerService.pause()
         } else {
-            webView.emitEvent(action: "player:buffering")
             playerService.play()
         }
     }
