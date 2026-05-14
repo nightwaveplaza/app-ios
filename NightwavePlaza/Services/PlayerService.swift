@@ -18,6 +18,7 @@ class PlayerService: NSObject {
     // MARK: - State
     let playbackRate = CurrentValueSubject<Float, Never>(0)
     @Published var isPlaying: Bool = false
+    private var userIntentToPlay: Bool = false
     
     // MARK: - Core Components
     private var player: AVPlayer
@@ -64,6 +65,8 @@ class PlayerService: NSObject {
     
     
     func play() {
+        userIntentToPlay = true
+        
         // Recover playback if the stream chunk failed (e.g. after a long pause or network drop)
         if player.currentItem?.status == .failed || player.status == .failed {
            setupPlayerItem()
@@ -73,6 +76,7 @@ class PlayerService: NSObject {
     }
     
     func pause() {
+        userIntentToPlay = false
         player.pause()
     }
     
@@ -104,12 +108,10 @@ class PlayerService: NSObject {
             
             if path.status == .satisfied {
                 DispatchQueue.main.async {
-                    if self.player.status == .failed || self.player.currentItem?.status == .failed {
-                        let wasPlaying = self.isPlaying
+                    if self.userIntentToPlay && self.player.timeControlStatus != .playing {
+                        print("Network restored. Recovering playback...")
                         self.setupPlayerItem()
-                        if wasPlaying {
-                            self.play()
-                        }
+                        self.player.play()
                     }
                 }
             }
@@ -170,8 +172,7 @@ class PlayerService: NSObject {
             guard let self = self else { return .commandFailed }
             if !self.isPlaying {
                 DispatchQueue.main.async {
-                    self.player.play()
-                    self.isPlaying = true
+                    self.play()
                 }
                 return .success
             }
@@ -183,8 +184,7 @@ class PlayerService: NSObject {
             guard let self = self else { return .commandFailed }
             if self.isPlaying {
                 DispatchQueue.main.async {
-                    self.player.pause()
-                    self.isPlaying = false
+                    self.pause()
                 }
                 return .success
             }

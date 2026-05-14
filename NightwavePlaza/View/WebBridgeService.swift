@@ -51,6 +51,10 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
             case "playAudio":
                 callback?.onPlayAudio()
                 replyHandler(nil, nil)
+            
+            case "stopAudio":
+                callback?.onPlayAudio()
+                replyHandler(nil, nil)
                 
             case "setBackground":
                 if let src = args.first as? String {
