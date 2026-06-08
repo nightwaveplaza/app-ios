@@ -24,6 +24,7 @@
 		11768E032FA1BB89003FAE2D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 11768E022FA1BB89003FAE2D /* Localizable.xcstrings */; };
 		11768E0E2FA1BF08003FAE2D /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */; };
 		11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */; };
+		1195B8A42FBBFE0D00D2881A /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 1195B8A32FBBFE0D00D2881A /* Sentry */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD602479B56100C58CFE /* Assets.xcassets */; };
 		FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD622479B56100C58CFE /* LaunchScreen.storyboard */; };
@@ -85,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11768DFD2FA1A61D003FAE2D /* Swifter in Frameworks */,
+				1195B8A42FBBFE0D00D2881A /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,10 +310,12 @@
 				"pt-BR",
 				ja,
 				tr,
+				uk,
 			);
 			mainGroup = FA0FFD4B2479B55F00C58CFE;
 			packageReferences = (
 				11768DFB2FA1A61D003FAE2D /* XCRemoteSwiftPackageReference "swifter" */,
+				1195B8A22FBBFE0D00D2881A /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FA0FFD552479B55F00C58CFE /* Products */;
@@ -535,7 +539,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 9FQX2JHWBB;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -544,7 +548,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -565,7 +569,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = 9FQX2JHWBB;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -574,7 +578,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0;
+				MARKETING_VERSION = 2.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -669,6 +673,14 @@
 				minimumVersion = 1.5.0;
 			};
 		};
+		1195B8A22FBBFE0D00D2881A /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.13.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -676,6 +688,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 11768DFB2FA1A61D003FAE2D /* XCRemoteSwiftPackageReference "swifter" */;
 			productName = Swifter;
+		};
+		1195B8A32FBBFE0D00D2881A /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1195B8A22FBBFE0D00D2881A /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
