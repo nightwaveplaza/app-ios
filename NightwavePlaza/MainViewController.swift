@@ -12,7 +12,7 @@ import WebKit
 import SafariServices
 import Combine
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - UI Components
     let backgroundView = BackgroundView()
@@ -27,6 +27,7 @@ class MainViewController: UIViewController {
     private let playerService = PlayerService.shared
     private let sleepTimerService = SleepTimerService.shared
     private var cancellables = Set<AnyCancellable>()
+    private var webViewNeedsReload = false
        
     
     // MARK: - Lifecycle
@@ -61,6 +62,21 @@ class MainViewController: UIViewController {
         
         self.setupWebView()
         setupController()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func appWillEnterForeground() {
+        if webViewNeedsReload || webView.url == nil {
+            print("Webview needs reload")
+            webViewNeedsReload = false
+            loadUrl()
+        }
     }
     
     // MARK: - Setup & Configuration
@@ -113,8 +129,12 @@ class MainViewController: UIViewController {
         #endif
         
         LocalWebServer.shared.start()
-                
+        loadUrl()
+    }
+    
+    func loadUrl() {
         if let url = URL(string: "http://127.0.0.1:8080") {
+        //if let url = URL(string: "http://plaza.int:4173") {
             webView.load(URLRequest(url: url))
         }
     }
@@ -237,5 +257,9 @@ extension MainViewController: WebViewCallback {
         UIView.animate(withDuration: 0.3) {
             self.setNeedsStatusBarAppearanceUpdate()
         }
+    }
+    
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        self.webViewNeedsReload = true
     }
 }

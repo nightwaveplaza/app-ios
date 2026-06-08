@@ -63,17 +63,17 @@ class LocalWebServer {
         let mimeType: String
         
         switch ext {
-        case "html": mimeType = "text/html"
-        case "css": mimeType = "text/css"
-        case "js", "mjs": mimeType = "application/javascript"
-        case "json": mimeType = "application/json"
-        case "png": mimeType = "image/png"
-        case "jpg", "jpeg": mimeType = "image/jpeg"
-        case "svg": mimeType = "image/svg+xml"
-        case "woff", "woff2", "ttf", "eot": mimeType = "font/\(ext)"
-        case "mp4": mimeType = "video/mp4"
-        case "webm": mimeType = "video/webm"
-        default: mimeType = "application/octet-stream"
+            case "html": mimeType = "text/html"
+            case "css": mimeType = "text/css"
+            case "js", "mjs": mimeType = "application/javascript"
+            case "json": mimeType = "application/json"
+            case "png": mimeType = "image/png"
+            case "jpg", "jpeg": mimeType = "image/jpeg"
+            case "svg": mimeType = "image/svg+xml"
+            case "woff", "woff2", "ttf", "eot": mimeType = "font/\(ext)"
+            case "mp4": mimeType = "video/mp4"
+            case "webm": mimeType = "video/webm"
+            default: mimeType = "application/octet-stream"
         }
         
         return .raw(200, "OK", ["Content-Type": mimeType]) { writer in
