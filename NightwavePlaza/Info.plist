@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>SENTRY_DSN</key>
+	<string>${SENTRY_DSN}</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -24,17 +26,6 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-<!--    <key>NSAppTransportSecurity</key>-->
-<!--    <dict>  -->
-<!--        <key>NSExceptionDomains</key>-->
-<!--        <dict>-->
-<!--            <key>plaza.int</key>-->
-<!--            <dict>-->
-<!--                <key>NSExceptionAllowsInsecureHTTPLoads</key>-->
-<!--                <true/>-->
-<!--            </dict>-->
-<!--        </dict>-->
-<!--    </dict>-->
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
