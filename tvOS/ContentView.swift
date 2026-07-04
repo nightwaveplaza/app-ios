@@ -72,6 +72,7 @@ struct MinimalNowPlayingView: View {
 
     @State private var nowPlayingInfo: [String: Any] = [:]
     @State private var cancellables = Set<AnyCancellable>()
+    @State private var lastTrackTitle: String = ""
 
     private var trackTitle: String {
         nowPlayingInfo[MPMediaItemPropertyTitle] as? String ?? ""
@@ -119,6 +120,13 @@ struct MinimalNowPlayingView: View {
             Spacer()
         }
         .onAppear { observeNowPlaying() }
+        .onChange(of: trackTitle) { newTitle in
+            guard Settings.changeBackgroundOnNewTrack else { return }
+            if !lastTrackTitle.isEmpty, newTitle != lastTrackTitle {
+                backgroundService.nextBackground()
+            }
+            lastTrackTitle = newTitle
+        }
         .onMoveCommand { direction in
             guard !Settings.disableSwipeToChange else { return }
             switch direction {
