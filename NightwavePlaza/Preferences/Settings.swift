@@ -46,6 +46,6 @@ enum Settings {
     @AppPreference(key: "SleepTimerMinutes", defaultValue: 0)
     static var sleepTimerMinutes: Int
 
-    @AppPreference(key: "ChangeBackgroundOnNewTrack", defaultValue: false)
+    @AppPreference(key: "ChangeBackgroundOnNewTrack", defaultValue: true)
     static var changeBackgroundOnNewTrack: Bool
 }
