@@ -27,6 +27,12 @@
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
+    },
+    {
+      "filename" : "classic.png",
+      "idiom" : "tv",
+      "platform" : "tvos",
+      "size" : "1280x768"
     }
   ],
   "info" : {

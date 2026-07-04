@@ -9,13 +9,17 @@
 import UIKit
 @preconcurrency
 import WebKit
+#if os(iOS)
 import SafariServices
+#endif
 import Combine
 
 class MainViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - UI Components
+#if os(iOS)
     let backgroundView = BackgroundView()
+#endif
     
     lazy var webView: WKWebView = {
         let config = WKWebViewConfiguration()
@@ -34,25 +38,36 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+#if os(iOS)
         view.addSubview(backgroundView)
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        
+#endif
+
         view.addSubview(webView)
         webView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         // Anchoring WebView directly to the view's edges (ignoring safe areas)
         // to allow the web app to draw edge-to-edge and handle notch insets via CSS
+#if os(iOS)
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
+
             webView.topAnchor.constraint(equalTo: view.topAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+#else
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+#endif
         
         view.backgroundColor = UIColor(named: "BackgroundTeal")
         
@@ -140,17 +155,19 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
     }
     
     // MARK: - Status Bar Configuration
+#if os(iOS)
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return Settings.themeColor.isLightColor ? .darkContent : .lightContent
     }
-    
+
     override var prefersStatusBarHidden: Bool {
         return Settings.fullScreen
     }
-    
+
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
         return .slide
     }
+#endif
 }
 
 // MARK: - WKNavigationDelegate
@@ -197,6 +214,7 @@ extension MainViewController: WKNavigationDelegate {
             return
         }
     
+#if os(iOS)
         // Prevent hijacking the main WebView. Open external web links in a modal Safari browser
         if url.scheme?.hasPrefix("http") == true {
             let controller = SFSafariViewController(url: url)
@@ -204,6 +222,7 @@ extension MainViewController: WKNavigationDelegate {
             decisionHandler(.cancel)
             return
         }
+#endif
         
         decisionHandler(.allow)
     }
@@ -222,19 +241,23 @@ extension MainViewController: WebViewCallback {
     }
     
     func onSetBackground(src: String) {
+#if os(iOS)
         if src == "solid" {
             backgroundView.clearVideo()
         } else if let url = URL(string: src) {
             backgroundView.setUrl(url: url)
         }
+#endif
     }
     
     func onToggleFullscreen() {
+#if os(iOS)
         Settings.fullScreen = !Settings.fullScreen
         // Animate the status bar to synchronize with the web layer's visual transition
         UIView.animate(withDuration: 0.5) {
             self.setNeedsStatusBarAppearanceUpdate()
         }
+#endif
     }
     
     func onSetSleepTimer(time: Double) {
@@ -262,4 +285,5 @@ extension MainViewController: WebViewCallback {
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         self.webViewNeedsReload = true
     }
+
 }

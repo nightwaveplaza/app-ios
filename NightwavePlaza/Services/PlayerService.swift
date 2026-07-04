@@ -12,7 +12,7 @@ import MediaPlayer
 import Combine
 import Network
 
-class PlayerService: NSObject {
+class PlayerService: NSObject, ObservableObject {
     static let shared = PlayerService()
     
     // MARK: - State

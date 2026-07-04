@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0BDADCD2DE9B4D3C959B70B6 /* String+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */; };
 		11304CD92F9EF2F500B3CBE0 /* WKWebView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CD82F9EF2EE00B3CBE0 /* WKWebView+Ext.swift */; };
 		11304CDB2F9F051900B3CBE0 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDA2F9F051500B3CBE0 /* PlayerService.swift */; };
 		11304CDD2F9F1CD200B3CBE0 /* MetadataSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDC2F9F1CCD00B3CBE0 /* MetadataSyncManager.swift */; };
@@ -26,6 +27,29 @@
 		11768E0E2FA1BF08003FAE2D /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */; };
 		11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */; };
 		1195B8A42FBBFE0D00D2881A /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 1195B8A32FBBFE0D00D2881A /* Sentry */; };
+		17544A0E09EA44EC953214C4 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FA2F9CF6C900DB1D6B /* APIClient.swift */; };
+		42923531BC184E29AEC66329 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */; };
+		4C9D1CD1A54946EBA2C8E109 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDA2F9F051500B3CBE0 /* PlayerService.swift */; };
+		59894401828E4C3AB180F586 /* MetadataSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDC2F9F1CCD00B3CBE0 /* MetadataSyncManager.swift */; };
+		68FEDBB9D7F946D09CDC686A /* AppPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF40A2F9CFAA600DB1D6B /* AppPreference.swift */; };
+		78706F34B99044BD9FD5AD2C /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FE2F9CF76900DB1D6B /* Song.swift */; };
+		8185A21C55184A878E6D868F /* String+Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DF92FA1A258003FAE2D /* String+Color.swift */; };
+		89F209406D8F425B9E6A9D3D /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FC2F9CF73900DB1D6B /* Status.swift */; };
+		B7D6103621994802A8913EEF /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 1195B8A32FBBFE0D00D2881A /* Sentry */; };
+		DF5B750F085040FCB70E627E /* BackgroundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E041399F4C249DEAA88E7B5 /* BackgroundService.swift */; };
+		E7EE7806F80D4EFA945277AA /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BF2BE9E56C4CA8AE86B2B3 /* Background.swift */; };
+		EB118F4482D54007975406FF /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF40B2F9CFAA600DB1D6B /* Settings.swift */; };
+		F37018AEC3C44843962DDCF2 /* SleepTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768DF32FA04C44003FAE2D /* SleepTimerService.swift */; };
+		F48675072FF876F90056154D /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675032FF876F90056154D /* AboutView.swift */; };
+		F48675082FF876F90056154D /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675042FF876F90056154D /* NowPlayingView.swift */; };
+		F48675092FF876F90056154D /* NightwavePlazaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675022FF876F90056154D /* NightwavePlazaApp.swift */; };
+		F486750A2FF876F90056154D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675052FF876F90056154D /* SettingsView.swift */; };
+		F486750B2FF876F90056154D /* BackgroundVideoLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48674FE2FF876F90056154D /* BackgroundVideoLayer.swift */; };
+		F486750C2FF876F90056154D /* ArtworkLockup.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48674FD2FF876F90056154D /* ArtworkLockup.swift */; };
+		F486750D2FF876F90056154D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675012FF876F90056154D /* ContentView.swift */; };
+		F486750E2FF876F90056154D /* TransportControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48674FF2FF876F90056154D /* TransportControl.swift */; };
+		F48675122FF88AA50056154D /* PreviewMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48675112FF88AA50056154D /* PreviewMocks.swift */; };
+		F48675142FF88CD60056154D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F48675132FF88CD60056154D /* Assets.xcassets */; };
 		FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0FFD572479B55F00C58CFE /* AppDelegate.swift */; };
 		FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD602479B56100C58CFE /* Assets.xcassets */; };
 		FA0FFD642479B56100C58CFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA0FFD622479B56100C58CFE /* LaunchScreen.storyboard */; };
@@ -65,6 +89,20 @@
 		11768E022FA1BB89003FAE2D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		11768E0D2FA1BF08003FAE2D /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		11768E0F2FA1C0EF003FAE2D /* String+Localized.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Localized.swift"; sourceTree = "<group>"; };
+		2E041399F4C249DEAA88E7B5 /* BackgroundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundService.swift; sourceTree = "<group>"; };
+		55BF2BE9E56C4CA8AE86B2B3 /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		9310FE997BEA426A96D2E796 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B00000000000000000000001 /* NightwavePlaza tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NightwavePlaza tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F48674FD2FF876F90056154D /* ArtworkLockup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkLockup.swift; sourceTree = "<group>"; };
+		F48674FE2FF876F90056154D /* BackgroundVideoLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundVideoLayer.swift; sourceTree = "<group>"; };
+		F48674FF2FF876F90056154D /* TransportControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportControl.swift; sourceTree = "<group>"; };
+		F48675012FF876F90056154D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F48675022FF876F90056154D /* NightwavePlazaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightwavePlazaApp.swift; sourceTree = "<group>"; };
+		F48675032FF876F90056154D /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		F48675042FF876F90056154D /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		F48675052FF876F90056154D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F48675112FF88AA50056154D /* PreviewMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewMocks.swift; sourceTree = "<group>"; };
+		F48675132FF88CD60056154D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nightwave Plaza.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA0FFD572479B55F00C58CFE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA0FFD602479B56100C58CFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -83,6 +121,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E6A48B6632DC4F648FA41B7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B7D6103621994802A8913EEF /* Sentry in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA0FFD512479B55F00C58CFE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -140,6 +186,21 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		30EF3F4AD76048A68C6A81CF /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				F48675112FF88AA50056154D /* PreviewMocks.swift */,
+				F48675002FF876F90056154D /* Components */,
+				F48675012FF876F90056154D /* ContentView.swift */,
+				F48675022FF876F90056154D /* NightwavePlazaApp.swift */,
+				F48675062FF876F90056154D /* Views */,
+				9310FE997BEA426A96D2E796 /* Info.plist */,
+				2E041399F4C249DEAA88E7B5 /* BackgroundService.swift */,
+				F48675132FF88CD60056154D /* Assets.xcassets */,
+			);
+			path = tvOS;
+			sourceTree = "<group>";
+		};
 		B2348EC994803B27A77EBFB5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,11 +211,32 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		F48675002FF876F90056154D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				F48674FD2FF876F90056154D /* ArtworkLockup.swift */,
+				F48674FE2FF876F90056154D /* BackgroundVideoLayer.swift */,
+				F48674FF2FF876F90056154D /* TransportControl.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		F48675062FF876F90056154D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F48675032FF876F90056154D /* AboutView.swift */,
+				F48675042FF876F90056154D /* NowPlayingView.swift */,
+				F48675052FF876F90056154D /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		FA0FFD4B2479B55F00C58CFE = {
 			isa = PBXGroup;
 			children = (
 				114727782FDA43AD00971441 /* AppConfig.xcconfig */,
 				11768E022FA1BB89003FAE2D /* Localizable.xcstrings */,
+				30EF3F4AD76048A68C6A81CF /* tvOS */,
 				FA0FFD562479B55F00C58CFE /* NightwavePlaza */,
 				FA0FFD6D2479B56100C58CFE /* NightwavePlazaTests */,
 				FA0FFD552479B55F00C58CFE /* Products */,
@@ -166,6 +248,7 @@
 			children = (
 				FA0FFD542479B55F00C58CFE /* Nightwave Plaza.app */,
 				FA0FFD6A2479B56100C58CFE /* NightwavePlazaTests.xctest */,
+				B00000000000000000000001 /* NightwavePlaza tvOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -212,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				114CF3FE2F9CF76900DB1D6B /* Song.swift */,
+				55BF2BE9E56C4CA8AE86B2B3 /* Background.swift */,
 				114CF3FC2F9CF73900DB1D6B /* Status.swift */,
 			);
 			path = Models;
@@ -241,6 +325,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0855CA2AC8B0448394E07493 /* NightwavePlaza tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5B2B225557341CAB26F177D /* Build configuration list for PBXNativeTarget "NightwavePlaza tvOS" */;
+			buildPhases = (
+				E9E32F8B7D70418AA3B486EF /* Sources */,
+				E6A48B6632DC4F648FA41B7C /* Frameworks */,
+				D71851EA4010453AAEA55422 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "NightwavePlaza tvOS";
+			productName = "NightwavePlaza tvOS";
+			productReference = B00000000000000000000001 /* NightwavePlaza tvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 		FA0FFD532479B55F00C58CFE /* NightwavePlaza */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA0FFD732479B56100C58CFE /* Build configuration list for PBXNativeTarget "NightwavePlaza" */;
@@ -327,11 +428,20 @@
 			targets = (
 				FA0FFD532479B55F00C58CFE /* NightwavePlaza */,
 				FA0FFD692479B56100C58CFE /* NightwavePlazaTests */,
+				0855CA2AC8B0448394E07493 /* NightwavePlaza tvOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D71851EA4010453AAEA55422 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F48675142FF88CD60056154D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA0FFD522479B55F00C58CFE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -355,6 +465,35 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E9E32F8B7D70418AA3B486EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C9D1CD1A54946EBA2C8E109 /* PlayerService.swift in Sources */,
+				F48675072FF876F90056154D /* AboutView.swift in Sources */,
+				F48675082FF876F90056154D /* NowPlayingView.swift in Sources */,
+				F48675092FF876F90056154D /* NightwavePlazaApp.swift in Sources */,
+				F486750A2FF876F90056154D /* SettingsView.swift in Sources */,
+				F486750B2FF876F90056154D /* BackgroundVideoLayer.swift in Sources */,
+				F486750C2FF876F90056154D /* ArtworkLockup.swift in Sources */,
+				F486750D2FF876F90056154D /* ContentView.swift in Sources */,
+				F48675122FF88AA50056154D /* PreviewMocks.swift in Sources */,
+				F486750E2FF876F90056154D /* TransportControl.swift in Sources */,
+				59894401828E4C3AB180F586 /* MetadataSyncManager.swift in Sources */,
+				17544A0E09EA44EC953214C4 /* APIClient.swift in Sources */,
+				89F209406D8F425B9E6A9D3D /* Status.swift in Sources */,
+				78706F34B99044BD9FD5AD2C /* Song.swift in Sources */,
+				68FEDBB9D7F946D09CDC686A /* AppPreference.swift in Sources */,
+				EB118F4482D54007975406FF /* Settings.swift in Sources */,
+				F37018AEC3C44843962DDCF2 /* SleepTimerService.swift in Sources */,
+				8185A21C55184A878E6D868F /* String+Color.swift in Sources */,
+				42923531BC184E29AEC66329 /* LanguageManager.swift in Sources */,
+				0BDADCD2DE9B4D3C959B70B6 /* String+Localized.swift in Sources */,
+				E7EE7806F80D4EFA945277AA /* Background.swift in Sources */,
+				DF5B750F085040FCB70E627E /* BackgroundService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA0FFD502479B55F00C58CFE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -411,6 +550,61 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		974B2B3113894DF08ECAD63C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 114727782FDA43AD00971441 /* AppConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = WD69YZ5DTX;
+				INFOPLIST_FILE = tvOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 26.6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
+				PRODUCT_NAME = "NightwavePlaza tvOS";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "NightwavePlaza/Network/NightwavePlaza-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		9A8231AD63C14F7C949F4D3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 114727782FDA43AD00971441 /* AppConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 15;
+				DEVELOPMENT_TEAM = WD69YZ5DTX;
+				INFOPLIST_FILE = tvOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 26.6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
+				PRODUCT_NAME = "NightwavePlaza tvOS";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "NightwavePlaza/Network/NightwavePlaza-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
 		FA0FFD712479B56100C58CFE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -545,7 +739,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
-				DEVELOPMENT_TEAM = 9FQX2JHWBB;
+				DEVELOPMENT_TEAM = WD69YZ5DTX;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -576,7 +770,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 15;
-				DEVELOPMENT_TEAM = 9FQX2JHWBB;
+				DEVELOPMENT_TEAM = WD69YZ5DTX;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -641,6 +835,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		D5B2B225557341CAB26F177D /* Build configuration list for PBXNativeTarget "NightwavePlaza tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9A8231AD63C14F7C949F4D3A /* Debug */,
+				974B2B3113894DF08ECAD63C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FA0FFD4F2479B55F00C58CFE /* Build configuration list for PBXProject "NightwavePlaza" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

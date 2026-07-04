@@ -30,10 +30,22 @@ enum Settings {
     
     // Get default language
     static var defaultLanguage: String {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, tvOS 16, *) {
             return Locale.current.language.languageCode?.identifier ?? "en"
         } else {
             return Locale.current.languageCode ?? "en"
         }
     }
+
+    @AppPreference(key: "VideoBackgroundEnabled", defaultValue: true)
+    static var videoBackgroundEnabled: Bool
+
+    @AppPreference(key: "DisableSwipeToChange", defaultValue: false)
+    static var disableSwipeToChange: Bool
+
+    @AppPreference(key: "SleepTimerMinutes", defaultValue: 0)
+    static var sleepTimerMinutes: Int
+
+    @AppPreference(key: "ChangeBackgroundOnNewTrack", defaultValue: false)
+    static var changeBackgroundOnNewTrack: Bool
 }
