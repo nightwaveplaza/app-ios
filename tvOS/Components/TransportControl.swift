@@ -19,7 +19,7 @@ struct TransportControl: View {
             .padding(.horizontal, 48)
             .padding(.vertical, 24)
         }
-        .buttonStyle(CardButtonStyle())
+        .buttonStyle(.card)
     }
 
     private func togglePlayback() {
