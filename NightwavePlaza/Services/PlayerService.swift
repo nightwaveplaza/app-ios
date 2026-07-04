@@ -80,7 +80,6 @@ class PlayerService: NSObject, ObservableObject {
     func pause() {
         userIntentToPlay = false
         player.pause()
-        player.replaceCurrentItem(with: nil)
     }
     
     // MARK: - Core Playback & Quality
