@@ -24,17 +24,9 @@
 	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
 	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Web</string>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleDarkContent</string>
 </dict>
 </plist>

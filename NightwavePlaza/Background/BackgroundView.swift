@@ -6,6 +6,8 @@
 //  Copyright © 2026 Alexander Morozov. All rights reserved.
 //
 
+#if os(iOS)
+
 import AVFoundation
 import UIKit
 
@@ -333,3 +335,5 @@ class DisplayLinkProxy {
 final class PlaybackToken {
     var isCancelled = false
 }
+
+#endif

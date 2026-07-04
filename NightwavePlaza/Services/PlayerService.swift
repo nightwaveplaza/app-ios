@@ -12,7 +12,7 @@ import MediaPlayer
 import Combine
 import Network
 
-class PlayerService: NSObject {
+class PlayerService: NSObject, ObservableObject {
     static let shared = PlayerService()
     
     // MARK: - State
@@ -80,7 +80,6 @@ class PlayerService: NSObject {
     func pause() {
         userIntentToPlay = false
         player.pause()
-        player.replaceCurrentItem(with: nil)
     }
     
     // MARK: - Core Playback & Quality
