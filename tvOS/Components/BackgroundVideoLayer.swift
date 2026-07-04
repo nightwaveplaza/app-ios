@@ -119,6 +119,9 @@ struct BackgroundVideoLayer: View {
 }
 
 /// UIViewRepresentable wrapping AVPlayerLayer.
+/// Note: on tvOS, AVPlayerLayer uses _UIReplicantView internally which may
+/// produce a benign system warning when embedded in a UIHostingController.
+/// Video playback is unaffected.
 private struct VideoPlayerView: UIViewRepresentable {
     let player: AVPlayer
 
