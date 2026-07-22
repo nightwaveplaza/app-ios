@@ -84,8 +84,13 @@ class LocalWebServer {
             default: mimeType = "application/octet-stream"
         }
         
-        return .raw(200, "OK", ["Content-Type": mimeType]) { writer in
-            try? writer.write([UInt8](data))
-        }
+        let cacheControl = (ext == "html") ? "no-store" : "public, max-age=31536000, immutable"
+
+        let headers = [
+            "Content-Type": mimeType,
+            "Cache-Control": cacheControl
+        ]
+
+        return .raw(200, "OK", headers) { writer in try? writer.write([UInt8](data)) }
     }
 }
