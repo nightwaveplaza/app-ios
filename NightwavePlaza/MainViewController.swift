@@ -214,10 +214,14 @@ extension MainViewController: WKNavigationDelegate {
 // Routes abstracted interactions from the JS layer to native implementations.
 extension MainViewController: WebViewCallback {
     func onPlayAudio() {
+        if (!playerService.isPlaying) {
+            playerService.play()
+        }
+    }
+    
+    func onStopAudio() {
         if (playerService.isPlaying) {
             playerService.pause()
-        } else {
-            playerService.play()
         }
     }
     

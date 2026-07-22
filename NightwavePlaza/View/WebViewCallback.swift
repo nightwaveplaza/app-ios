@@ -8,6 +8,7 @@
 
 protocol WebViewCallback: AnyObject {
     func onPlayAudio()
+    func onStopAudio()
     func onSetBackground(src: String)
     func onToggleFullscreen()
     func onSetSleepTimer(time: Double)
