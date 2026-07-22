@@ -63,8 +63,9 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
                 replyHandler(nil, nil)
                 
             case "getUserAgent":
-                // TODO
-                replyHandler("NightwavePlaza iOS App", nil)
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+                let ua = "NightwavePlaza iOS/\(version) (\(UIDevice.current.model); iOS \(UIDevice.current.systemVersion))"
+                replyHandler(ua, nil)
                 
             case "setAudioQuality":
                 if let lowQuality = args.first as? Bool {
