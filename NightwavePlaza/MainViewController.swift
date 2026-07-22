@@ -70,7 +70,7 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
             object: nil
         )
     }
-    
+
     @objc private func appWillEnterForeground() {
         if webViewNeedsReload || webView.url == nil {
             print("Webview needs reload")
@@ -207,6 +207,14 @@ extension MainViewController: WKNavigationDelegate {
         
         decisionHandler(.allow)
     }
+    
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        if UIApplication.shared.applicationState != .background {
+            loadUrl()
+        } else {
+            webViewNeedsReload = true
+        }
+    }
 }
 
 // MARK: - WebViewCallback
@@ -261,9 +269,5 @@ extension MainViewController: WebViewCallback {
         UIView.animate(withDuration: 0.3) {
             self.setNeedsStatusBarAppearanceUpdate()
         }
-    }
-    
-    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        self.webViewNeedsReload = true
     }
 }
