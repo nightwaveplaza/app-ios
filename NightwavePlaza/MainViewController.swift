@@ -242,7 +242,7 @@ extension MainViewController: WebViewCallback {
     }
     
     func onSetSleepTimer(time: Double) {
-        //sleepTimerService.sleepAt(timestamp: time)
+        sleepTimerService.sleepAt(timestamp: time)
     }
     
     func onSetLanguage(lang: String) {
