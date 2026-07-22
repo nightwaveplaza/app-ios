@@ -54,6 +54,8 @@ class PlayerService: NSObject {
         setupPlayerObservation()
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleInterruption), name: AVAudioSession.interruptionNotification, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRouteChange), name: AVAudioSession.routeChangeNotification, object: nil)
     }
     
     private func setupPlayerObservation() {
@@ -181,29 +183,38 @@ class PlayerService: NSObject {
         let commandCenter = MPRemoteCommandCenter.shared()
         commandCenter.playCommand.removeTarget(nil)
         commandCenter.pauseCommand.removeTarget(nil)
+        commandCenter.togglePlayPauseCommand.removeTarget(nil)
         
         // Handle 'Play' from lockscreen, Control Center, or Bluetooth headphones
-        commandCenter.playCommand.addTarget { [weak self] event in
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            guard let self = self, !self.userIntentToPlay else { return .commandFailed }
+            DispatchQueue.main.async {
+                self.play()
+            }
+            return .success
+        }
+
+         // Gate 'Pause' on the user's intent, not on isPlaying: while the stream
+         // is buffering isPlaying is false, but pause must still work
+         commandCenter.pauseCommand.addTarget { [weak self] _ in
+             guard let self = self, self.userIntentToPlay else { return .commandFailed }
+             DispatchQueue.main.async {
+                 self.pause()
+             }
+             return .success
+        }
+
+         // A single tap on AirPods / a headset button sends toggle, not play or pause
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
             guard let self = self else { return .commandFailed }
-            if !self.isPlaying {
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                if self.userIntentToPlay {
+                    self.pause()
+                } else {
                     self.play()
                 }
-                return .success
             }
-            return .commandFailed
-        }
-        
-        // Handle 'Pause' from lockscreen, Control Center, or Bluetooth headphones
-        commandCenter.pauseCommand.addTarget { [weak self] event in
-            guard let self = self else { return .commandFailed }
-            if self.isPlaying {
-                DispatchQueue.main.async {
-                    self.pause()
-                }
-                return .success
-            }
-            return .commandFailed
+            return .success
         }
         
         // Explicitly disable seek/skip controls since this is a live radio stream
@@ -266,6 +277,29 @@ class PlayerService: NSObject {
             guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
             if AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume) {
                 play()
+            }
+        }
+    }
+    
+    // MARK: - Route Changes (Headphones unplugged, Bluetooth disconnected)
+    @objc private func handleRouteChange(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue),
+              reason == .oldDeviceUnavailable else { return }
+
+         // Pause only if the device that disappeared was an external output we were
+        let previousRoute = userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription
+        let wasOnExternalOutput = previousRoute?.outputs.contains { output in
+            [.headphones, .bluetoothA2DP, .bluetoothHFP, .bluetoothLE, .usbAudio, .carAudio, .airPlay]
+                .contains(output.portType)
+         } ?? false
+
+        guard wasOnExternalOutput else { return }
+
+        DispatchQueue.main.async {
+            if self.userIntentToPlay {
+                self.pause()
             }
         }
     }
