@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         SentrySDK.start { options in
             options.dsn = dsn
-            options.tracesSampleRate = 1.0
+            options.tracesSampleRate = 0.1
         }
         
         return true
