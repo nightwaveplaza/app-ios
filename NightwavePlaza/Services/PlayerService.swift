@@ -120,7 +120,11 @@ class PlayerService: NSObject {
             
             if path.status == .satisfied {
                 DispatchQueue.main.async {
-                    if self.userIntentToPlay && self.player.timeControlStatus != .playing {
+                    let itemBroken = self.player.currentItem == nil
+                        || self.player.currentItem?.status == .failed
+                        || self.player.status == .failed
+
+                    if self.userIntentToPlay && itemBroken {
                         print("Network restored. Recovering playback...")
                         self.setupPlayerItem()
                         self.player.play()
