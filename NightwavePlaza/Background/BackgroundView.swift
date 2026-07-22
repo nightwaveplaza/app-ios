@@ -109,7 +109,6 @@ class BackgroundView: UIView {
         
         let newAsset = AVURLAsset(url: url)
         self.asset = newAsset
-        self.assetDuration = newAsset.duration
         
         startPlayback(with: newAsset)
     }
