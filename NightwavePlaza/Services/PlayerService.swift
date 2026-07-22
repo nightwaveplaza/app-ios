@@ -69,6 +69,12 @@ class PlayerService: NSObject {
     func play() {
         userIntentToPlay = true
         
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to activate audio session: \(error)")
+        }
+        
         // Recover playback if the stream chunk failed (e.g. after a long pause or network drop)
         if player.currentItem == nil || player.currentItem?.status == .failed || player.status == .failed {
             setupPlayerItem()
@@ -81,6 +87,9 @@ class PlayerService: NSObject {
         userIntentToPlay = false
         player.pause()
         player.replaceCurrentItem(with: nil)
+        
+        // Release the audio focus for other apps
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
     
     // MARK: - Core Playback & Quality
@@ -158,7 +167,6 @@ class PlayerService: NSObject {
         do {
             // Configure as a continuous media playback app (allows background play)
             try session.setCategory(.playback, mode: .default, policy: .longFormAudio, options: [])
-            try session.setActive(true)
         } catch {
             print("Failed to setup audio session: \(error)")
         }
