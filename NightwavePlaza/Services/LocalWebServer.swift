@@ -24,8 +24,15 @@ class LocalWebServer {
         
         server.middleware.append { [weak self] request in
             guard let self = self else { return nil }
-            let path = request.path
             
+            var path = request.path
+            if let queryIndex = path.firstIndex(of: "?") {
+                path = String(path[..<queryIndex])
+            }
+            path = path.removingPercentEncoding ?? path
+
+            guard !path.contains("..") else { return .notFound }
+
             let relativePath = path == "/" ? "/index.html" : path
             let fullPath = publicDir + relativePath
             
@@ -47,7 +54,8 @@ class LocalWebServer {
         }
 
         do {
-            try server.start(8080)
+            server.listenAddressIPv4 = "127.0.0.1"
+            try server.start(8080, forceIPv4: true)
             print("Local server started on port 8080")
         } catch {
             print("Failed to run local server: \(error)")
