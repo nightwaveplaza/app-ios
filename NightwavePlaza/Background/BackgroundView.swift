@@ -96,6 +96,7 @@ class BackgroundView: UIView {
         downloadTask?.cancel()
         
         stopPlayback()
+        asset = nil
         displayLayer.isHidden = true
     }
 
@@ -127,7 +128,7 @@ class BackgroundView: UIView {
         
         // Deriving the target frame rate from the asset to optimize display link callbacks
         let trackFps = asset.tracks(withMediaType: .video).first?.nominalFrameRate ?? 30.0
-        let targetFps = trackFps > 0 ? Float(trackFps) : 30.0
+        let targetFps = min(max(trackFps > 0 ? trackFps : 30.0, 24.0), 30.0)
 
         let proxy = DisplayLinkProxy(target: self, selector: #selector(onVSync))
         displayLink = CADisplayLink(target: proxy, selector: #selector(DisplayLinkProxy.onVSync))
@@ -221,6 +222,8 @@ class BackgroundView: UIView {
             // Safe to flush the layer on the Main thread only after all media queue operations
             // have completed, ensuring no late frames are enqueued after the flush
             DispatchQueue.main.async {
+                // Skip the flush if a new playback session has already started
+                guard self.activeToken == nil else { return }
                 self.displayLayer.flushAndRemoveImage()
             }
         }
