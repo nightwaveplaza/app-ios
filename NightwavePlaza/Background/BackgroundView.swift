@@ -2,7 +2,7 @@
 //  BackgroundView.swift
 //  NightwavePlaza
 //
-//  Created by Aleksey Garbarev on 30.04.2026.
+//  Created by Alexander Morozov on 30.04.2026.
 //  Copyright © 2026 Alexander Morozov. All rights reserved.
 //
 
@@ -118,22 +118,40 @@ class BackgroundView: UIView {
         let token = PlaybackToken()
         self.activeToken = token
         self.cumulativePTSOffset = .zero
-        
+
         displayLayer.flushAndRemoveImage()
-        
+    
+        Task { [weak self] in
+            // Load asset properties asynchronously: the sync .duration/.tracks
+            // accessors parse the file and would block the main thread
+            let duration = (try? await asset.load(.duration)) ?? .zero
+            let tracks = (try? await asset.loadTracks(withMediaType: .video)) ?? []
+
+            var trackFps: Float = 30
+            if let track = tracks.first, let fps = try? await track.load(.nominalFrameRate) {
+                trackFps = fps
+            }
+
+            await MainActor.run {
+                guard let self, !token.isCancelled else { return }
+                self.assetDuration = duration
+                self.beginRendering(asset: asset, trackFps: trackFps, token: token)
+            }
+        }
+    }
+    
+    private func beginRendering(asset: AVURLAsset, trackFps: Float, token: PlaybackToken) {
         mediaQueue.async { [weak self] in
             guard let self, !token.isCancelled else { return }
             self.prepareInitialReaders(for: asset)
         }
-        
-        // Deriving the target frame rate from the asset to optimize display link callbacks
-        let trackFps = asset.tracks(withMediaType: .video).first?.nominalFrameRate ?? 30.0
+    
+        // CAFrameRateRange raises NSInvalidArgumentException if preferred is outside
+        // [minimum, maximum], so clamp the asset's fps into the allowed range
         let targetFps = min(max(trackFps > 0 ? trackFps : 30.0, 24.0), 30.0)
 
         let proxy = DisplayLinkProxy(target: self, selector: #selector(onVSync))
         displayLink = CADisplayLink(target: proxy, selector: #selector(DisplayLinkProxy.onVSync))
-        
-        // Tying the rendering loop to the device's screen refresh rate
         displayLink?.preferredFrameRateRange = CAFrameRateRange(minimum: 24, maximum: 30, preferred: targetFps)
         displayLink?.add(to: .main, forMode: .common)
     }
