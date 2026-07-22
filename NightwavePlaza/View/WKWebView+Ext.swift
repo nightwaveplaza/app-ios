@@ -8,35 +8,37 @@
 import WebKit
 
 extension WKWebView {
-    
+        
     func emitEvent<T: Encodable>(action: String, payload: T) {
         DispatchQueue.main.async {
-            let jsonString: String
-            
             do {
                 let data = try JSONEncoder().encode(payload)
-                jsonString = String(data: data, encoding: .utf8) ?? "null"
+                let json = String(data: data, encoding: .utf8) ?? "null"
+                
+                self.callAsyncJavaScript(
+                    "window.dispatchEvent(new CustomEvent(action, { detail: JSON.parse(json) }))",
+                    arguments: ["action": action, "json": json],
+                    in: nil,
+                    in: .page
+                ) { result in
+                    if case .failure(let error) = result {
+                        print("JS Evaluation Error for \(action): \(error)")
+                    }
+                }
             } catch {
                 print("JS Encode Error for \(action): \(error)")
-                jsonString = "null"
-            }
-                        
-            let script = "window.dispatchEvent(new CustomEvent('\(action)', { detail: \(jsonString) }));"
-            print(script)
-
-            
-            self.evaluateJavaScript(script) { _, error in
-                if let error = error {
-                    print("JS Evaluation Error: \(error)")
-                }
             }
         }
     }
-    
+     
     func emitEvent(action: String) {
         DispatchQueue.main.async {
-            let script = "window.dispatchEvent(new CustomEvent('\(action)'));"
-            self.evaluateJavaScript(script)
+            self.callAsyncJavaScript(
+                "window.dispatchEvent(new CustomEvent(action))",
+                arguments: ["action": action],
+                in: nil,
+                in: .page
+            )
         }
     }
 }
