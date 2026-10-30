@@ -546,7 +546,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 9FQX2JHWBB;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -555,7 +555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 26.7.1;
+				MARKETING_VERSION = 26.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -577,7 +577,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NightwavePlaza/Nightwave Plaza.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 9FQX2JHWBB;
 				INFOPLIST_FILE = NightwavePlaza/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
@@ -586,7 +586,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 26.7.1;
+				MARKETING_VERSION = 26.10.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nightwaveplaza.NightwavePlaza;
 				PRODUCT_NAME = "Nightwave Plaza";
 				PROVISIONING_PROFILE_SPECIFIER = "";
