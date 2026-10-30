@@ -1,49 +1,45 @@
 #!/bin/bash
-ENV=${1:-prod}
+set -euo pipefail
 
+VIEW_ENV=${1:-prod}
 PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$PROJECT_ROOT" || exit 1
-echo ">>> [AppView] Project root resolved to: $PROJECT_ROOT"
+OUT_DIR="$PROJECT_ROOT/NightwavePlaza/WebApp"
+WORK_DIR=$(mktemp -d)
+trap 'rm -rf "$WORK_DIR"' EXIT
 
-OUT_DIR="${PROJECT_ROOT}/NightwavePlaza/WebApp"
-echo ">>> [AppView] OUT_DIR will be $OUT_DIR"
+case "$VIEW_ENV" in
+    prod)
+        curl --fail --silent --show-error --location --retry 3 \
+            https://akai.plaza.one/app-view/manifest-ios.json -o "$WORK_DIR/manifest.json"
+        TARGET=$(jq -ce '.versions | max_by(.view_version) |
+            select(.url | type == "string" and startswith("https://")) |
+            select(.sha256 | type == "string" and test("^[a-fA-F0-9]{64}$"))' "$WORK_DIR/manifest.json")
+        BUNDLE_URL=$(jq -r '.url' <<< "$TARGET")
+        EXPECTED_HASH=$(jq -r '.sha256 | ascii_downcase' <<< "$TARGET")
+        echo ">>> [AppView] Downloading version $(jq -r '.view_version' <<< "$TARGET")"
+        ;;
+    dev)
+        BUNDLE_URL=https://akai.plaza.one/app-view/dev/build-mobile-snapshot.zip
+        ;;
+    *)
+        echo "Usage: $0 [prod|dev]" >&2
+        exit 1
+        ;;
+esac
 
-if [ "$ENV" == "dev" ]; then
-    echo ">>> [AppView] Running in DEV mode, downloading bundle directly..."
-    BUNDLE_URL="https://akai.plaza.one/app-view/dev/build-mobile-snapshot.zip"
-    curl -L -o /tmp/view.zip "$BUNDLE_URL"
-    find "$OUT_DIR" -mindepth 1 ! -name '.gitignore' -exec rm -rf {} +
-    unzip -q /tmp/view.zip -d "$OUT_DIR"
-    rm /tmp/view.zip
-    echo ">>> [AppView] Dev bundle embedded."
-    exit 0
+curl --fail --silent --show-error --location --retry 3 "$BUNDLE_URL" -o "$WORK_DIR/view.zip"
+if [ "$VIEW_ENV" = prod ]; then
+    CALCULATED_HASH=$(shasum -a 256 "$WORK_DIR/view.zip" | awk '{print $1}')
+    if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
+        echo ">>> [AppView] SHA-256 mismatch; existing bundle kept." >&2
+        exit 1
+    fi
 fi
 
-echo ">>> [AppView] Running in PROD mode"
-MANIFEST_URL="https://akai.plaza.one/app-view/manifest-ios.json"
-
-echo ">>> [AppView] Fetching version manifest..."
-MANIFEST=$(curl -s -f "$MANIFEST_URL")
-if [ -z "$MANIFEST" ]; then
-    echo ">>> [AppView] Failed to fetch manifest. Skipping."
-    exit 1
-fi
-
-TARGET_VERSION=$(echo "$MANIFEST" | jq -r '.versions | max_by(.view_version) | .view_version')
-TARGET_URL=$(echo "$MANIFEST" | jq -r '.versions | max_by(.view_version) | .url')
-EXPECTED_HASH=$(echo "$MANIFEST" | jq -r '.versions | max_by(.view_version) | .sha256')
-
-echo ">>> [AppView] Downloading view version $TARGET_VERSION..."
-curl -L -o /tmp/view.zip "$TARGET_URL"
-
-CALCULATED_HASH=$(shasum -a 256 /tmp/view.zip | awk '{ print $1 }')
-if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then
-    echo ">>> [AppView] Hash mismatch! Expected: $EXPECTED_HASH, Got: $CALCULATED_HASH"
-    rm /tmp/view.zip
-    exit 1
-fi
-
-find "$OUT_DIR" -mindepth 1 ! -name '.gitignore' -exec rm -rf {} +
-unzip -q /tmp/view.zip -d "$OUT_DIR"
-rm /tmp/view.zip
-echo ">>> [AppView] Version $TARGET_VERSION successfully embedded."
+# Validate the download before replacing the last usable bundle.
+unzip -q "$WORK_DIR/view.zip" -d "$WORK_DIR/unpacked"
+test -s "$WORK_DIR/unpacked/index.html"
+mkdir -p "$OUT_DIR"
+find "$OUT_DIR" -mindepth 1 ! -name '.gitignore' -delete
+cp -R "$WORK_DIR/unpacked/." "$OUT_DIR/"
+echo ">>> [AppView] Bundle embedded successfully."

@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A17D27010000000000000001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17D27010000000000000002 /* SceneDelegate.swift */; };
 		11304CD92F9EF2F500B3CBE0 /* WKWebView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CD82F9EF2EE00B3CBE0 /* WKWebView+Ext.swift */; };
 		11304CDB2F9F051900B3CBE0 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDA2F9F051500B3CBE0 /* PlayerService.swift */; };
 		11304CDD2F9F1CD200B3CBE0 /* MetadataSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11304CDC2F9F1CCD00B3CBE0 /* MetadataSyncManager.swift */; };
-		114727792FDA43AD00971441 /* AppConfig.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 114727782FDA43AD00971441 /* AppConfig.xcconfig */; };
 		114CF3FB2F9CF6D000DB1D6B /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FA2F9CF6C900DB1D6B /* APIClient.swift */; };
 		114CF3FD2F9CF73A00DB1D6B /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FC2F9CF73900DB1D6B /* Status.swift */; };
 		114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114CF3FE2F9CF76900DB1D6B /* Song.swift */; };
@@ -48,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A17D27010000000000000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		11304CD82F9EF2EE00B3CBE0 /* WKWebView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WKWebView+Ext.swift"; sourceTree = "<group>"; };
 		11304CDA2F9F051500B3CBE0 /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
 		11304CDC2F9F1CCD00B3CBE0 /* MetadataSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataSyncManager.swift; sourceTree = "<group>"; };
@@ -178,6 +179,7 @@
 				FA0FFD652479B56100C58CFE /* Info.plist */,
 				FAC43AA124D6AB300073341F /* Web.storyboard */,
 				FA0FFD572479B55F00C58CFE /* AppDelegate.swift */,
+				A17D27010000000000000002 /* SceneDelegate.swift */,
 				FAC43AA324D6AB520073341F /* MainViewController.swift */,
 				FA0FFD602479B56100C58CFE /* Assets.xcassets */,
 				114CF4142F9D0C3800DB1D6B /* Background */,
@@ -340,7 +342,6 @@
 				11768E032FA1BB89003FAE2D /* Localizable.xcstrings in Resources */,
 				11768DEE2FA0419C003FAE2D /* WebApp in Resources */,
 				FA0FFD612479B56100C58CFE /* Assets.xcassets in Resources */,
-				114727792FDA43AD00971441 /* AppConfig.xcconfig in Resources */,
 				FAC43AA224D6AB300073341F /* Web.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -369,6 +370,7 @@
 				114CF3FF2F9CF76B00DB1D6B /* Song.swift in Sources */,
 				11304CDD2F9F1CD200B3CBE0 /* MetadataSyncManager.swift in Sources */,
 				FA0FFD582479B55F00C58CFE /* AppDelegate.swift in Sources */,
+				A17D27010000000000000001 /* SceneDelegate.swift in Sources */,
 				11768DF42FA04C44003FAE2D /* SleepTimerService.swift in Sources */,
 				11768E102FA1C0F4003FAE2D /* String+Localized.swift in Sources */,
 				FA2D1DAC24E8873F00EE0556 /* WebBridgeService.swift in Sources */,

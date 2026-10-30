@@ -6,7 +6,7 @@ The UI is a web app (a mobile build of the plaza.one interface) shown in a WKWeb
 
 ## Requirements
 
-- Xcode 15 or newer
+- Xcode 27.1 or newer
 - `jq` for the fetch script (`brew install jq`)
 
 ## Building

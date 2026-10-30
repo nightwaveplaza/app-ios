@@ -62,21 +62,20 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
         
         self.setupWebView()
         setupController()
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(appWillEnterForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
     }
 
-    @objc private func appWillEnterForeground() {
-        if webViewNeedsReload || webView.url == nil {
+    func sceneWillEnterForeground() {
+        loadViewIfNeeded()
+        backgroundView.resumePlayback()
+        if webViewNeedsReload || (webView.url == nil && !webView.isLoading) {
             print("Webview needs reload")
             webViewNeedsReload = false
             loadUrl()
         }
+    }
+
+    func sceneDidEnterBackground() {
+        backgroundView.suspendPlayback()
     }
     
     // MARK: - Setup & Configuration
@@ -209,7 +208,8 @@ extension MainViewController: WKNavigationDelegate {
     }
     
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-        if UIApplication.shared.applicationState != .background {
+        if let scene = viewIfLoaded?.window?.windowScene,
+           scene.activationState == .foregroundActive || scene.activationState == .foregroundInactive {
             loadUrl()
         } else {
             webViewNeedsReload = true

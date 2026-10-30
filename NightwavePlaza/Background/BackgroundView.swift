@@ -32,6 +32,7 @@ class BackgroundView: UIView {
     private var downloadTask: Task<Void, Never>?
     
     private var isDecoding = false
+    private var isPlaybackSuspended = false
 
     // MARK: - Initialization
     
@@ -50,10 +51,6 @@ class BackgroundView: UIView {
         displayLayer.videoGravity = .resizeAspectFill
         displayLayer.magnificationFilter = .nearest
         layer.addSublayer(displayLayer)
-
-        // Observing lifecycle events to manually manage GPU resources and playback state
-        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     override func layoutSubviews() {
@@ -114,6 +111,8 @@ class BackgroundView: UIView {
     }
 
     private func startPlayback(with asset: AVURLAsset) {
+        // A download may finish after the scene has entered the background.
+        guard !isPlaybackSuspended else { return }
         let token = PlaybackToken()
         self.activeToken = token
         self.cumulativePTSOffset = .zero
@@ -246,15 +245,18 @@ class BackgroundView: UIView {
         }
     }
 
-    // MARK: - App Lifecycle
+    // MARK: - Scene Lifecycle
 
-    @objc private func didEnterBackground() {
+    func suspendPlayback() {
+        isPlaybackSuspended = true
         // App goes to background: hardware decoders and GPU contexts are usually suspended
         // Hard stopping the playback avoids crashes related to background OpenGL/Metal usage
         stopPlayback()
     }
 
-    @objc private func willEnterForeground() {
+    func resumePlayback() {
+        guard isPlaybackSuspended else { return }
+        isPlaybackSuspended = false
         // Re-initializing the playback pipeline from scratch when returning to foreground
         if let asset = self.asset {
             startPlayback(with: asset)
@@ -262,7 +264,6 @@ class BackgroundView: UIView {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
         stopPlayback()
     }
     
