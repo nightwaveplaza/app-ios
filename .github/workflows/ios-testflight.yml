@@ -1,0 +1,66 @@
+name: TestFlight Internal Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: Optional build number override (must exceed existing TestFlight builds)
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  simulator:
+    name: Build and launch on iOS 27
+    if: github.ref == 'refs/heads/master'
+    uses: ./.github/workflows/ios-simulator.yml
+    permissions:
+      contents: read
+
+  testflight:
+    name: TestFlight Internal Only
+    if: github.ref == 'refs/heads/master'
+    needs: simulator
+    runs-on: xcode-27
+    timeout-minutes: 35
+    environment: testflight
+    concurrency:
+      group: testflight-upload
+      cancel-in-progress: false
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          artifact-ids: ${{ needs.simulator.outputs.web_ui_artifact_id }}
+          path: build
+      - name: Restore the web UI tested in the simulator
+        run: |
+          ditto -x -k build/web-ui.zip NightwavePlaza/WebApp
+          test -s NightwavePlaza/WebApp/index.html
+          printf 'SENTRY_DSN =\n' > AppConfig.xcconfig
+      - name: Sign, archive, and upload
+        env:
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
+          BUILD_NUMBER: ${{ inputs.build_number }}
+          DISTRIBUTION_P12_BASE64: ${{ secrets.DISTRIBUTION_P12_BASE64 }}
+          DISTRIBUTION_P12_PASSWORD: ${{ secrets.DISTRIBUTION_P12_PASSWORD }}
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE_BASE64 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY_BASE64: ${{ secrets.ASC_PRIVATE_KEY_BASE64 }}
+        run: bash Scripts/ci_testflight.sh
+      - name: Save distribution symbols and build logs
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: testflight-diagnostics-${{ github.run_attempt }}
+          path: |
+            build/Archive.xcresult
+            build/archive.log
+            build/upload.log
+            build/NightwavePlaza.xcarchive/dSYMs
+          retention-days: 14
