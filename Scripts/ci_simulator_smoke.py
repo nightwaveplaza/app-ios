@@ -6,15 +6,56 @@ import subprocess
 import time
 
 
+BOOT_TIMEOUT = 600
+
+
 def simctl(*args, **kwargs):
     return subprocess.run(["xcrun", "simctl", *args], check=True, **kwargs)
+
+
+def boot_simulator(name, udid, state, log_path):
+    print(f"{name}: waiting up to {BOOT_TIMEOUT} seconds for simulator boot ({udid})", flush=True)
+    with log_path.open("w") as log:
+        try:
+            if state != "Booted":
+                simctl("boot", udid, stdout=log, stderr=subprocess.STDOUT, timeout=60)
+            simctl("bootstatus", udid, "-b", stdout=log, stderr=subprocess.STDOUT, timeout=BOOT_TIMEOUT)
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError(f"{name}: simulator boot timed out; see {log_path}") from error
+
+
+def cleanup_simctl(*args, timeout):
+    try:
+        result = subprocess.run(["xcrun", "simctl", *args], check=False, timeout=timeout)
+        if result.returncode:
+            print(f"Warning: simctl {' '.join(args)} exited with {result.returncode}", flush=True)
+    except (OSError, subprocess.TimeoutExpired) as error:
+        # Cleanup must preserve the original smoke check failure
+        print(f"Warning: simulator cleanup failed: {error}", flush=True)
+
+
+def cleanup_simulator(udid, bundle_id, process):
+    if process is not None:
+        cleanup_simctl("terminate", udid, bundle_id, timeout=30)
+        try:
+            if process.poll() is None:
+                process.terminate()
+            try:
+                process.wait(timeout=15)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=15)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            print(f"Warning: launch process cleanup failed: {error}", flush=True)
+    cleanup_simctl("shutdown", udid, timeout=60)
 
 
 def main():
     app = Path("build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app")
     diagnostics = Path("build/diagnostics")
     diagnostics.mkdir(parents=True, exist_ok=True)
-    devices = json.loads(simctl("list", "devices", "available", "--json", capture_output=True).stdout)
+    devices = json.loads(simctl("list", "devices", "available", "--json", capture_output=True, timeout=60).stdout)
+    (diagnostics / "devices.json").write_text(json.dumps(devices, indent=2))
     bundle_id = "com.nightwaveplaza.NightwavePlaza"
 
     for name in ("iPhone Duo", "iPhone 18 Pro"):
@@ -30,11 +71,10 @@ def main():
         device = candidates[0]
         udid = device["udid"]
         log_path = diagnostics / f"{name}.log"
+        boot_log_path = diagnostics / f"{name}-boot.log"
         process = None
         try:
-            if device["state"] != "Booted":
-                simctl("boot", udid, timeout=60)
-            simctl("bootstatus", udid, "-b", timeout=180)
+            boot_simulator(name, udid, device["state"], boot_log_path)
             simctl("install", udid, str(app), timeout=60)
             with log_path.open("w") as log:
                 process = subprocess.Popen(
@@ -57,14 +97,10 @@ def main():
                 simctl("io", udid, "screenshot", str(diagnostics / f"{name}.png"), timeout=30)
                 print(f"{name}: native launch and web bridge handshake passed", flush=True)
         finally:
-            if process is not None:
-                subprocess.run(["xcrun", "simctl", "terminate", udid, bundle_id], check=False, timeout=30)
-                if process.poll() is None:
-                    process.terminate()
-                process.wait(timeout=15)
-            subprocess.run(["xcrun", "simctl", "shutdown", udid], check=False, timeout=60)
-            if log_path.exists():
-                print(log_path.read_text(), flush=True)
+            cleanup_simulator(udid, bundle_id, process)
+            for path in (boot_log_path, log_path):
+                if path.exists():
+                    print(f"--- {path.name} ---\n{path.read_text()}", flush=True)
 
 
 if __name__ == "__main__":

@@ -26,6 +26,8 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
+      - name: Test simulator smoke script
+        run: python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
       - name: Prepare web UI and configuration
         run: |
           printf 'SENTRY_DSN =\n' > AppConfig.xcconfig
