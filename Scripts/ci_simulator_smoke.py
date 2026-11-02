@@ -13,15 +13,17 @@ def simctl(*args, **kwargs):
     return subprocess.run(["xcrun", "simctl", *args], check=True, **kwargs)
 
 
-def boot_simulator(name, udid, state, log_path):
+def boot_simulator(name, udid, log_path):
     print(f"{name}: waiting up to {BOOT_TIMEOUT} seconds for simulator boot ({udid})", flush=True)
     with log_path.open("w") as log:
         try:
-            if state != "Booted":
-                simctl("boot", udid, stdout=log, stderr=subprocess.STDOUT, timeout=60)
+            simctl("boot", udid, stdout=log, stderr=subprocess.STDOUT, timeout=60)
             simctl("bootstatus", udid, "-b", stdout=log, stderr=subprocess.STDOUT, timeout=BOOT_TIMEOUT)
         except subprocess.TimeoutExpired as error:
             raise RuntimeError(f"{name}: simulator boot timed out; see {log_path}") from error
+    # Bootstatus can exit successfully after a failed data migration
+    if "Data Migration Failed" in log_path.read_text():
+        raise RuntimeError(f"{name}: simulator data migration failed; see {log_path}")
 
 
 def cleanup_simctl(*args, timeout):
@@ -48,33 +50,41 @@ def cleanup_simulator(udid, bundle_id, process):
         except (OSError, subprocess.TimeoutExpired) as error:
             print(f"Warning: launch process cleanup failed: {error}", flush=True)
     cleanup_simctl("shutdown", udid, timeout=60)
+    cleanup_simctl("delete", udid, timeout=60)
 
 
 def main():
     app = Path("build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app")
     diagnostics = Path("build/diagnostics")
     diagnostics.mkdir(parents=True, exist_ok=True)
-    devices = json.loads(simctl("list", "devices", "available", "--json", capture_output=True, timeout=60).stdout)
-    (diagnostics / "devices.json").write_text(json.dumps(devices, indent=2))
+    inventory = json.loads(simctl("list", "--json", capture_output=True, timeout=60).stdout)
+    (diagnostics / "devices.json").write_text(json.dumps(inventory, indent=2))
+    runtimes = [
+        runtime for runtime in inventory["runtimes"]
+        if runtime["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-27-")
+        and runtime.get("isAvailable", False)
+    ]
+    if not runtimes:
+        raise RuntimeError("Required iOS 27 simulator runtime missing")
+    runtime = max(runtimes, key=lambda entry: tuple(int(part) for part in entry["version"].split(".")))
+    device_types = {entry["name"]: entry["identifier"] for entry in inventory["devicetypes"]}
     bundle_id = "com.nightwaveplaza.NightwavePlaza"
 
     for name in ("iPhone Duo", "iPhone 18 Pro"):
-        candidates = [
-            device
-            for runtime, entries in devices["devices"].items()
-            if "iOS-27-" in runtime
-            for device in entries
-            if device["name"] == name and device.get("isAvailable", False)
-        ]
-        if not candidates:
-            raise RuntimeError(f"Required iOS 27 simulator missing: {name}")
-        device = candidates[0]
-        udid = device["udid"]
+        if name not in device_types:
+            raise RuntimeError(f"Required simulator device type missing: {name}")
+        print(f"{name}: creating a clean simulator with {runtime['identifier']}", flush=True)
+        udid = simctl(
+            "create", f"Nightwave Plaza smoke - {name}", device_types[name], runtime["identifier"],
+            capture_output=True, text=True, timeout=60,
+        ).stdout.strip()
+        if not udid:
+            raise RuntimeError(f"{name}: simulator creation returned no UDID")
         log_path = diagnostics / f"{name}.log"
         boot_log_path = diagnostics / f"{name}-boot.log"
         process = None
         try:
-            boot_simulator(name, udid, device["state"], boot_log_path)
+            boot_simulator(name, udid, boot_log_path)
             simctl("install", udid, str(app), timeout=60)
             with log_path.open("w") as log:
                 process = subprocess.Popen(
