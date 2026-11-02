@@ -12,17 +12,9 @@ permissions:
   contents: read
 
 jobs:
-  simulator:
-    name: Build and launch on iOS 27
-    if: github.ref == 'refs/heads/master'
-    uses: ./.github/workflows/ios-simulator.yml
-    permissions:
-      contents: read
-
   testflight:
     name: TestFlight Internal Only
     if: github.ref == 'refs/heads/master'
-    needs: simulator
     runs-on: xcode-27
     timeout-minutes: 35
     environment: testflight
@@ -33,15 +25,15 @@ jobs:
       DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          artifact-ids: ${{ needs.simulator.outputs.web_ui_artifact_id }}
-          path: build
-      - name: Restore the web UI tested in the simulator
+          python-version: '3.13'
+      - name: Prepare Xcode, web UI and configuration
         run: |
-          ditto -x -k build/web-ui.zip NightwavePlaza/WebApp
-          test -s NightwavePlaza/WebApp/index.html
+          sudo xcode-select --switch "$DEVELOPER_DIR"
+          xcodebuild -version
           printf 'SENTRY_DSN =\n' > AppConfig.xcconfig
+          bash Scripts/fetch_view.sh
       - name: Sign, archive, and upload
         env:
           APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}

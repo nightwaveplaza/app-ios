@@ -28,6 +28,41 @@ class SimulatorSmokeTests(unittest.TestCase):
             ]},
         }
 
+        for runtime in self.inventory["runtimes"]:
+            runtime["supportedDeviceTypes"] = self.inventory["devicetypes"]
+
+    def test_runtime_selected_per_device_not_globally(self):
+        older, newer, unavailable = self.inventory["runtimes"]
+        older["supportedDeviceTypes"] = [self.inventory["devicetypes"][1]]
+        newer["supportedDeviceTypes"] = [self.inventory["devicetypes"][0]]
+        self.assertEqual(smoke.select_runtime(self.inventory, "type-iPhone Duo"), newer)
+        self.assertEqual(smoke.select_runtime(self.inventory, "type-iPhone 18 Pro"), older)
+
+    def test_incompatible_runtime_fails_before_creating_device(self):
+        for runtime in self.inventory["runtimes"]:
+            runtime["supportedDeviceTypes"] = []
+        with tempfile.TemporaryDirectory() as directory, contextlib.chdir(directory):
+            with patch.object(smoke, "simctl", side_effect=self.simctl_result) as simctl:
+                with self.assertRaisesRegex(RuntimeError, "Compatible iOS 27 simulator runtime missing"):
+                    smoke.main(devices=("iPhone 18 Pro",))
+            self.assertEqual([call.args[0] for call in simctl.call_args_list], ["list"])
+
+    def test_selected_device_does_not_launch_other_model(self):
+        with tempfile.TemporaryDirectory() as directory, contextlib.chdir(directory):
+            with (
+                patch.object(smoke, "simctl", side_effect=self.simctl_result) as simctl,
+                patch.object(smoke, "boot_simulator"),
+                patch.object(smoke, "install_app"),
+                patch.object(smoke, "wait_for_handshake"),
+                patch.object(smoke.subprocess, "Popen"),
+                patch.object(smoke, "cleanup_simulator"),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                smoke.main(devices=("iPhone 18 Pro",))
+            creates = [call.args for call in simctl.call_args_list if call.args[0] == "create"]
+            self.assertEqual(len(creates), 1)
+            self.assertEqual(creates[0][2], "type-iPhone 18 Pro")
+
     def simctl_result(self, *args, **kwargs):
         if args[0] == "list":
             return subprocess.CompletedProcess(args, 0, stdout=json.dumps(self.inventory))

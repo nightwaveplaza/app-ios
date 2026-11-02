@@ -1,5 +1,6 @@
 """Launch the real bundled SPA on two iOS 27 simulators; require its bridge handshake."""
 
+import argparse
 import json
 from pathlib import Path
 import subprocess
@@ -138,33 +139,44 @@ def cleanup_simulator(udid, bundle_id, process):
     cleanup_simctl("delete", udid, timeout=60)
 
 
-def main(screenshots=False):
+def select_runtime(inventory, device_type):
+    # iOS 27.1 supports Duo only; newer is not necessarily compatible
+    runtimes = [
+        runtime for runtime in inventory["runtimes"]
+        if runtime["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-27-")
+        and runtime.get("isAvailable", False)
+        and any(device["identifier"] == device_type
+                for device in runtime.get("supportedDeviceTypes", []))
+    ]
+    if not runtimes:
+        raise RuntimeError(f"Compatible iOS 27 simulator runtime missing for {device_type}; see devices.json")
+    return max(runtimes, key=lambda entry: tuple(int(part) for part in entry["version"].split(".")))
+
+
+def main(screenshots=False, devices=("iPhone Duo", "iPhone 18 Pro")):
     print(f"Smoke check interpreter: {sys.executable} ({sys.version.split()[0]})", flush=True)
     app = Path("build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app")
     diagnostics = Path("build/diagnostics")
     diagnostics.mkdir(parents=True, exist_ok=True)
     inventory = json.loads(simctl("list", "--json", capture_output=True, timeout=60).stdout)
     (diagnostics / "devices.json").write_text(json.dumps(inventory, indent=2))
-    runtimes = [
-        runtime for runtime in inventory["runtimes"]
-        if runtime["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-27-")
-        and runtime.get("isAvailable", False)
-    ]
-    if not runtimes:
-        raise RuntimeError("Required iOS 27 simulator runtime missing")
-    runtime = max(runtimes, key=lambda entry: tuple(int(part) for part in entry["version"].split(".")))
     device_types = {entry["name"]: entry["identifier"] for entry in inventory["devicetypes"]}
     bundle_id = "com.nightwaveplaza.NightwavePlaza"
 
-    for name in ("iPhone Duo", "iPhone 18 Pro"):
+    for name in devices:
         if name not in device_types:
             raise RuntimeError(f"Required simulator device type missing: {name}")
+        runtime = select_runtime(inventory, device_types[name])
         for attempt in range(1, BOOT_ATTEMPTS + 1):
             print(f"{name}: creating a clean simulator with {runtime['identifier']}", flush=True)
-            udid = simctl(
-                "create", f"Nightwave Plaza smoke - {name}", device_types[name], runtime["identifier"],
-                capture_output=True, text=True, timeout=60,
-            ).stdout.strip()
+            try:
+                udid = simctl(
+                    "create", f"Nightwave Plaza smoke - {name}", device_types[name], runtime["identifier"],
+                    capture_output=True, text=True, timeout=60,
+                ).stdout.strip()
+            except subprocess.CalledProcessError as error:
+                (diagnostics / f"{name}-create.log").write_text(error.stderr or "")
+                raise RuntimeError(f"{name}: simulator creation failed: {error.stderr}") from error
             if not udid:
                 raise RuntimeError(f"{name}: simulator creation returned no UDID")
             log_path = diagnostics / f"{name}-attempt-{attempt}.log"
@@ -202,4 +214,9 @@ def main(screenshots=False):
 
 
 if __name__ == "__main__":
-    main(screenshots="--screenshots" in sys.argv[1:])
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--device", choices=("iPhone Duo", "iPhone 18 Pro"))
+    parser.add_argument("--screenshots", action="store_true")
+    args = parser.parse_args()
+    main(screenshots=args.screenshots,
+         devices=(args.device,) if args.device else ("iPhone Duo", "iPhone 18 Pro"))

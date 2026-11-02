@@ -1,4 +1,4 @@
-name: iOS Screenshots
+name: iOS Smoke and Screenshots
 
 on:
   workflow_dispatch:
@@ -6,11 +6,68 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ios-simulator-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  screenshots:
-    name: Capture iPhone Duo and iPhone 18 Pro
-    uses: ./.github/workflows/ios-simulator.yml
-    with:
-      screenshots: true
-    permissions:
-      contents: read
+  simulator:
+    name: Smoke and screenshots — ${{ matrix.device }}
+    runs-on: xcode-27
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        device: ['iPhone Duo', 'iPhone 18 Pro']
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Test simulator smoke script
+        run: python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
+      - name: Prepare web UI and configuration
+        run: |
+          printf 'SENTRY_DSN =\n' > AppConfig.xcconfig
+          bash Scripts/fetch_view.sh
+          mkdir -p build/diagnostics
+          xcodebuild -version
+      - name: Prepare simulator runtime
+        timeout-minutes: 10
+        run: |
+          set -o pipefail
+          sudo xcode-select --switch "$DEVELOPER_DIR"
+          sudo xcodebuild -runFirstLaunch 2>&1 | tee build/diagnostics/first-launch.log
+          xcrun simctl runtime dyld_shared_cache update --all 2>&1 | tee build/diagnostics/runtime-cache.log
+      - name: Compile simulator app
+        run: |
+          set -o pipefail
+          xcodebuild -project NightwavePlaza.xcodeproj -scheme NightwavePlaza \
+            -configuration Debug -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData -resultBundlePath build/Simulator.xcresult \
+            -onlyUsePackageVersionsFromResolvedFile \
+            CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM= build 2>&1 | tee build/diagnostics/build.log
+      - name: Smoke test and capture screenshots
+        env:
+          SIMULATOR_DEVICE: ${{ matrix.device }}
+        run: python3 Scripts/ci_simulator_smoke.py --device "$SIMULATOR_DEVICE" --screenshots
+      - name: Save screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: screenshots-${{ matrix.device }}-${{ github.run_attempt }}
+          path: build/diagnostics/*.png
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Save simulator diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: simulator-diagnostics-${{ matrix.device }}-${{ github.run_attempt }}
+          path: |
+            build/diagnostics
+            build/Simulator.xcresult
+          retention-days: 7

@@ -29,6 +29,57 @@ Leave the value empty if you don't need Sentry.
 
 3. Open `NightwavePlaza.xcodeproj` and build. Dependencies (Sentry, Swifter) are resolved by Swift Package Manager on first build.
 
+## GitHub Actions
+
+Both workflows are started manually from the Actions tab:
+
+- **TestFlight Internal Testing** (`ios-testflight.yml`): runs on `master`, downloads
+  the current production web UI with SHA-256 verification, archives a Release build,
+  signs it and uploads to TestFlight Internal Only. It does not wait for simulators.
+  Apple still needs to process the uploaded build.
+- **iOS Smoke and Screenshots** (`ios-screenshots.yml`): builds and runs the bundled
+  app on iPhone Duo and iPhone 18 Pro in independent matrix jobs. Each job requires
+  the real web UI's `onReady` handshake before capturing screenshots. A failure on
+  one device does not cancel the other. This checks startup and the bridge, not
+  audio playback or all UI interactions.
+
+Both use the `xcode-27` runner and Xcode 27.1. The smoke script selects the newest
+available iOS 27 runtime whose `supportedDeviceTypes` includes the requested phone:
+currently iOS 27.1 for Duo and iOS 27.0 for 18 Pro. A missing compatible runtime
+fails explicitly; a different phone is never substituted.
+
+Download `screenshots-<device>-<attempt>` from the smoke run's artifacts: Duo has
+`small` and `large` PNGs (displays 1 and 3); 18 Pro has one PNG. Failure captures
+have a `-failure` suffix. `simulator-diagnostics-<device>-<attempt>` includes the
+runtime inventory, boot/install/app logs and build result. Distribution logs and
+dSYMs are in `testflight-diagnostics-<attempt>`.
+
+The GitHub environment `testflight` must contain:
+
+- Variable `APPLE_TEAM_ID`.
+- Secrets `DISTRIBUTION_P12_BASE64`, `DISTRIBUTION_P12_PASSWORD` and
+  `PROVISIONING_PROFILE_BASE64` (App Store distribution profile for
+  `com.nightwaveplaza.NightwavePlaza`).
+- Secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_BASE64` for the App Store
+  Connect API key with permission to upload this app.
+
+The optional `build_number` input overrides the generated build number
+(`1000 + github.run_number`, followed by the run attempt). Overrides must exceed
+previous TestFlight builds; after a large manual override, subsequent runs may
+also need an override. CI creates an empty `SENTRY_DSN` configuration.
+
+Local smoke-script regression checks (Python 3.11+):
+
+```sh
+python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
+```
+
+The previous TestFlight run [41448050956](https://github.com/nightwaveplaza/app-ios/actions/runs/41448050956)
+compiled successfully and passed the Duo handshake, then failed creating 18 Pro
+on the Duo-only iOS 27.1 runtime (simctl exit 147). Its signing/upload job was
+skipped because it depended on that smoke job. Runtime compatibility is also
+tracked in [actions/runner-images#15000](https://github.com/actions/runner-images/issues/15000).
+
 ## How it works
 
 - `Scripts/fetch_view.sh` downloads the pre-built web UI into `NightwavePlaza/WebApp`. This folder is not stored in git.
