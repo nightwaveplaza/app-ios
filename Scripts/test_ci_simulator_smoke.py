@@ -139,7 +139,7 @@ class SimulatorSmokeTests(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 smoke.collect_diagnostics("iPhone", "device-id", Path(directory))
-            self.assertEqual(run.call_count, 3)
+            self.assertEqual(run.call_count, 4)
             self.assertEqual(len(list(Path(directory).iterdir())), 3)
 
     def test_shutdown_timeout_does_not_replace_boot_failure(self):
@@ -210,6 +210,46 @@ class SimulatorSmokeTests(unittest.TestCase):
                     smoke.main()
             self.assertEqual([call.args[0] for call in simctl.call_args_list], ["list"])
             cleanup.assert_not_called()
+
+
+class HandshakeTests(unittest.TestCase):
+    def wait_for_app(self, ready_after=None, exits_after=None):
+        elapsed = 0
+        process = Mock()
+        process.poll.side_effect = lambda: 0 if exits_after is not None and elapsed >= exits_after else None
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "app.log"
+            path.write_text("Local server started on port 8080\n")
+
+            def advance(seconds):
+                nonlocal elapsed
+                elapsed += seconds
+                if ready_after is not None and elapsed >= ready_after:
+                    path.write_text("Vue App is ready!\n")
+
+            with (
+                patch.object(smoke.time, "monotonic", side_effect=lambda: elapsed),
+                patch.object(smoke.time, "sleep", side_effect=advance),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                smoke.wait_for_handshake("iPhone", process, path)
+        return elapsed
+
+    def test_slow_web_startup_can_complete_after_ninety_seconds(self):
+        elapsed = self.wait_for_app(ready_after=120)
+        self.assertEqual(elapsed, 123)
+
+    def test_native_startup_without_bridge_still_fails(self):
+        with self.assertRaisesRegex(RuntimeError, "no web bridge handshake within 300 seconds"):
+            self.wait_for_app()
+
+    def test_app_exit_before_handshake_fails_immediately(self):
+        with self.assertRaisesRegex(RuntimeError, "app exited before completing smoke check"):
+            self.wait_for_app(exits_after=1)
+
+    def test_app_exit_after_handshake_still_fails(self):
+        with self.assertRaisesRegex(RuntimeError, "app exited after web UI initialization"):
+            self.wait_for_app(ready_after=120, exits_after=121)
 
 
 class SubprocessTests(unittest.TestCase):

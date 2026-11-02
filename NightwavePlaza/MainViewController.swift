@@ -134,6 +134,9 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
     func loadUrl() {
         if let url = URL(string: "http://127.0.0.1:8080") {
         //if let url = URL(string: "http://plaza.int:4173") {
+            #if DEBUG
+            print("WebView: loading bundled UI")
+            #endif
             webView.load(URLRequest(url: url))
         }
     }
@@ -154,6 +157,19 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
 
 // MARK: - WKNavigationDelegate
 extension MainViewController: WKNavigationDelegate {
+    #if DEBUG
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        print("WebView: provisional navigation started")
+    }
+
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        print("WebView: navigation committed")
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        print("WebView: navigation finished")
+    }
+    #endif
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         print("WebViewError: Did Fail Navigation \(String(describing: navigation)), Error = \(error)");
@@ -208,6 +224,9 @@ extension MainViewController: WKNavigationDelegate {
     }
     
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        #if DEBUG
+        print("WebView: content process terminated")
+        #endif
         if let scene = viewIfLoaded?.window?.windowScene,
            scene.activationState == .foregroundActive || scene.activationState == .foregroundInactive {
             loadUrl()

@@ -30,9 +30,36 @@ class WebBridgeService: NSObject, WKScriptMessageHandlerWithReply {
         self.viewController = viewController
         
         configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "ios_app")
+        #if DEBUG
+        configuration.userContentController.addScriptMessageHandler(self, contentWorld: .page, name: "ios_diagnostics")
+        let diagnostics = WKUserScript(source: """
+            (() => {
+                const report = message => {
+                    window.webkit.messageHandlers.ios_diagnostics.postMessage(String(message)).catch(() => {});
+                };
+                report("Document script started");
+                window.addEventListener("DOMContentLoaded", () => report("DOM content loaded"));
+                window.addEventListener("load", () => report("Window loaded"));
+                window.addEventListener("error", event => {
+                    report(event.message || "Resource failed to load: " + (event.target?.tagName || "unknown"));
+                }, true);
+                window.addEventListener("unhandledrejection", event => {
+                    report("Unhandled rejection: " + String(event.reason));
+                });
+            })();
+            """, injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        configuration.userContentController.addUserScript(diagnostics)
+        #endif
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
+        #if DEBUG
+        if message.name == "ios_diagnostics" {
+            print("WebViewJS: \(message.body)")
+            replyHandler(nil, nil)
+            return
+        }
+        #endif
         
         guard let body = message.body as? [String: Any], let method = body["method"] as? String else {
             replyHandler(nil, "Invalid message format")

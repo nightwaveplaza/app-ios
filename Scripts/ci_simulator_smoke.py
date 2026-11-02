@@ -9,6 +9,7 @@ import time
 
 BOOT_TIMEOUT = 600
 INSTALL_TIMEOUT = 300
+HANDSHAKE_TIMEOUT = 300
 
 
 def simctl(*args, **kwargs):
@@ -42,10 +43,36 @@ def install_app(name, udid, app, log_path):
     print(f"{name}: app installed in {time.monotonic() - started:.1f} seconds", flush=True)
 
 
+def wait_for_handshake(name, process, log_path):
+    print(f"{name}: waiting up to {HANDSHAKE_TIMEOUT} seconds for web bridge handshake", flush=True)
+    started = time.monotonic()
+    deadline = started + HANDSHAKE_TIMEOUT
+    next_progress = started + 30
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError(f"{name}: app exited before completing smoke check")
+        if "Vue App is ready!" in log_path.read_text(errors="replace"):
+            time.sleep(3)
+            if process.poll() is not None:
+                raise RuntimeError(f"{name}: app exited after web UI initialization")
+            print(f"{name}: web bridge ready in {time.monotonic() - started:.1f} seconds", flush=True)
+            return
+        now = time.monotonic()
+        if now >= next_progress:
+            print(f"{name}: still waiting for web bridge ({now - started:.0f} seconds)", flush=True)
+            next_progress = now + 30
+        time.sleep(1)
+    raise RuntimeError(f"{name}: no web bridge handshake within {HANDSHAKE_TIMEOUT} seconds")
+
+
 def collect_diagnostics(name, udid, diagnostics):
+    try:
+        simctl("io", udid, "screenshot", str(diagnostics / f"{name}-failure.png"), timeout=60)
+    except (OSError, subprocess.SubprocessError) as error:
+        print(f"Warning: could not capture failure screenshot: {error}", flush=True)
     commands = (
         ("state.json", ["xcrun", "simctl", "list", "devices", "--json"]),
-        ("processes.log", ["ps", "-axo", "pid,ppid,state,%cpu,%mem,etime,command"]),
+        ("processes.log", ["ps", "-axo", "pid,ppid,state,etime,comm"]),
         ("system.log", [
             "xcrun", "simctl", "spawn", udid, "log", "show", "--last", "5m", "--style", "compact",
             "--predicate", 'process == "installd" OR process == "SpringBoard" OR process == "launchd_sim"',
@@ -129,18 +156,7 @@ def main():
                     stdout=log,
                     stderr=subprocess.STDOUT,
                 )
-                deadline = time.monotonic() + 90
-                while time.monotonic() < deadline:
-                    if process.poll() is not None:
-                        raise RuntimeError(f"{name}: app exited before completing smoke check")
-                    if "Vue App is ready!" in log_path.read_text():
-                        time.sleep(3)
-                        if process.poll() is not None:
-                            raise RuntimeError(f"{name}: app exited after web UI initialization")
-                        break
-                    time.sleep(1)
-                else:
-                    raise RuntimeError(f"{name}: no web bridge handshake within 90 seconds")
+                wait_for_handshake(name, process, log_path)
                 simctl("io", udid, "screenshot", str(diagnostics / f"{name}.png"), timeout=30)
                 print(f"{name}: native launch and web bridge handshake passed", flush=True)
         except Exception:
