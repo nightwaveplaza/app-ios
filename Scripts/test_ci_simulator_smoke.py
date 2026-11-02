@@ -181,7 +181,7 @@ class SimulatorSmokeTests(unittest.TestCase):
             with (
                 patch.object(smoke, "simctl", side_effect=self.simctl_result),
                 patch.object(smoke, "install_app", side_effect=failure),
-                patch.object(smoke, "collect_diagnostics", side_effect=lambda *args: events.append("diagnostics")),
+                patch.object(smoke, "collect_diagnostics", side_effect=lambda *args, **kwargs: events.append("diagnostics")),
                 patch.object(smoke, "cleanup_simulator", side_effect=lambda *args: events.append("cleanup")),
                 contextlib.redirect_stdout(io.StringIO()),
             ):
@@ -197,7 +197,7 @@ class SimulatorSmokeTests(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 smoke.collect_diagnostics("iPhone", "device-id", Path(directory))
-            self.assertEqual(run.call_count, 4)
+            self.assertEqual(run.call_count, 3)
             self.assertEqual(len(list(Path(directory).iterdir())), 3)
 
     def test_shutdown_timeout_does_not_replace_boot_failure(self):
@@ -239,7 +239,25 @@ class SimulatorSmokeTests(unittest.TestCase):
         ])
         self.assertTrue(all(command.kwargs["timeout"] == 30 for command in simctl.call_args_list))
 
-    def test_success_requires_handshake_and_screenshot_on_both_devices(self):
+    def test_screenshot_timeout_does_not_skip_other_display(self):
+        def simctl_result(*args, **kwargs):
+            if "--display=1" in args:
+                raise subprocess.TimeoutExpired("screenshot", 30)
+            return subprocess.CompletedProcess(args, 0)
+
+        with (
+            patch.object(smoke, "simctl", side_effect=simctl_result) as simctl,
+            contextlib.redirect_stdout(io.StringIO()) as output,
+        ):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                smoke.capture_screenshot("iPhone Duo", "device-id", Path("Duo.png"), timeout=30)
+        self.assertEqual([command.args for command in simctl.call_args_list], [
+            ("io", "device-id", "screenshot", "--display=1", "Duo-small.png"),
+            ("io", "device-id", "screenshot", "--display=3", "Duo-large.png"),
+        ])
+        self.assertIn("Warning: could not capture Duo-small.png", output.getvalue())
+
+    def run_successful_main(self, screenshots):
         process = Mock()
         process.poll.return_value = None
 
@@ -256,26 +274,34 @@ class SimulatorSmokeTests(unittest.TestCase):
                 patch.object(smoke.time, "sleep"),
                 contextlib.redirect_stdout(io.StringIO()) as output,
             ):
-                smoke.main()
+                smoke.main(screenshots=screenshots)
             commands = [call.args for call in simctl.call_args_list]
             for name in self.names:
                 self.assertIn(("create", f"Nightwave Plaza smoke - {name}", f"type-{name}", self.runtime_id), commands)
                 self.assertIn(("install", f"fresh-{name}", "build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app"), commands)
                 self.assertIn(f"{name}: native launch and web bridge handshake passed", output.getvalue())
-            self.assertIn(
-                ("io", "fresh-iPhone Duo", "screenshot", "--display=1", "build/diagnostics/iPhone Duo-small.png"),
-                commands,
-            )
-            self.assertIn(
-                ("io", "fresh-iPhone Duo", "screenshot", "--display=3", "build/diagnostics/iPhone Duo-large.png"),
-                commands,
-            )
-            self.assertIn(
-                ("io", "fresh-iPhone 18 Pro", "screenshot", "build/diagnostics/iPhone 18 Pro.png"),
-                commands,
-            )
             self.assertFalse(any("stale-" in str(command) for command in commands))
             self.assertEqual(cleanup.call_count, 2)
+            return commands
+
+    def test_default_smoke_skips_screenshots(self):
+        commands = self.run_successful_main(screenshots=False)
+        self.assertFalse(any("screenshot" in str(command) for command in commands))
+
+    def test_screenshot_run_captures_both_devices(self):
+        commands = self.run_successful_main(screenshots=True)
+        self.assertIn(
+            ("io", "fresh-iPhone Duo", "screenshot", "--display=1", "build/diagnostics/iPhone Duo-small.png"),
+            commands,
+        )
+        self.assertIn(
+            ("io", "fresh-iPhone Duo", "screenshot", "--display=3", "build/diagnostics/iPhone Duo-large.png"),
+            commands,
+        )
+        self.assertIn(
+            ("io", "fresh-iPhone 18 Pro", "screenshot", "build/diagnostics/iPhone 18 Pro.png"),
+            commands,
+        )
 
     def test_missing_runtime_does_not_create_or_delete_devices(self):
         self.inventory["runtimes"] = []

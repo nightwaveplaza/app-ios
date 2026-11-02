@@ -73,17 +73,26 @@ def wait_for_handshake(name, process, log_path):
 
 def capture_screenshot(name, udid, path, timeout):
     displays = (("small", 1), ("large", 3)) if name == "iPhone Duo" else ((None, None),)
+    failure = None
     for suffix, display_id in displays:
         screenshot_path = path if suffix is None else path.with_name(f"{path.stem}-{suffix}{path.suffix}")
         display_args = [] if display_id is None else [f"--display={display_id}"]
-        simctl("io", udid, "screenshot", *display_args, str(screenshot_path), timeout=timeout)
+        try:
+            simctl("io", udid, "screenshot", *display_args, str(screenshot_path), timeout=timeout)
+        except (OSError, subprocess.SubprocessError) as error:
+            print(f"Warning: could not capture {screenshot_path}: {error}", flush=True)
+            if failure is None:
+                failure = error
+    if failure is not None:
+        raise failure
 
 
-def collect_diagnostics(name, udid, diagnostics):
-    try:
-        capture_screenshot(name, udid, diagnostics / f"{name}-failure.png", timeout=60)
-    except (OSError, subprocess.SubprocessError) as error:
-        print(f"Warning: could not capture failure screenshot: {error}", flush=True)
+def collect_diagnostics(name, udid, diagnostics, screenshots=False):
+    if screenshots:
+        try:
+            capture_screenshot(name, udid, diagnostics / f"{name}-failure.png", timeout=60)
+        except (OSError, subprocess.SubprocessError):
+            pass
     commands = (
         ("state.json", ["xcrun", "simctl", "list", "devices", "--json"]),
         ("processes.log", ["ps", "-axo", "pid,ppid,state,etime,comm"]),
@@ -129,7 +138,7 @@ def cleanup_simulator(udid, bundle_id, process):
     cleanup_simctl("delete", udid, timeout=60)
 
 
-def main():
+def main(screenshots=False):
     print(f"Smoke check interpreter: {sys.executable} ({sys.version.split()[0]})", flush=True)
     app = Path("build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app")
     diagnostics = Path("build/diagnostics")
@@ -172,15 +181,16 @@ def main():
                         stderr=subprocess.STDOUT,
                     )
                     wait_for_handshake(name, process, log_path)
-                    capture_screenshot(name, udid, diagnostics / f"{name}.png", timeout=30)
+                    if screenshots:
+                        capture_screenshot(name, udid, diagnostics / f"{name}.png", timeout=30)
                     print(f"{name}: native launch and web bridge handshake passed", flush=True)
             except SimulatorMigrationError:
                 if attempt == BOOT_ATTEMPTS:
-                    collect_diagnostics(name, udid, diagnostics)
+                    collect_diagnostics(name, udid, diagnostics, screenshots=screenshots)
                     raise
                 print(f"{name}: recreating simulator after data migration failure", flush=True)
             except Exception:
-                collect_diagnostics(name, udid, diagnostics)
+                collect_diagnostics(name, udid, diagnostics, screenshots=screenshots)
                 raise
             else:
                 break
@@ -192,4 +202,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(screenshots="--screenshots" in sys.argv[1:])

@@ -1,0 +1,16 @@
+name: iOS Screenshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    name: Capture iPhone Duo and iPhone 18 Pro
+    uses: ./.github/workflows/ios-simulator.yml
+    with:
+      screenshots: true
+    permissions:
+      contents: read

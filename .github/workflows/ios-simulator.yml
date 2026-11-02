@@ -3,6 +3,11 @@ name: iOS Simulator
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      screenshots:
+        description: Capture screenshots after the web bridge handshake
+        type: boolean
+        default: false
     outputs:
       web_ui_artifact_id:
         description: Artifact containing the web UI bundle that passed simulator checks
@@ -55,7 +60,11 @@ jobs:
             CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM= build 2>&1 | tee build/diagnostics/build.log
       - name: Launch on iPhone Duo and iPhone 18 Pro
+        if: ${{ !inputs.screenshots }}
         run: python3 Scripts/ci_simulator_smoke.py
+      - name: Launch and capture screenshots on iPhone Duo and iPhone 18 Pro
+        if: ${{ inputs.screenshots }}
+        run: python3 Scripts/ci_simulator_smoke.py --screenshots
       - name: Save tested web UI for signing job
         id: web_ui
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -64,11 +73,11 @@ jobs:
           path: build/web-ui.zip
           if-no-files-found: error
           retention-days: 7
-      - name: Save simulator screenshots and logs
+      - name: Save simulator diagnostics
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: simulator-diagnostics-${{ github.run_attempt }}
+          name: ${{ inputs.screenshots && 'ios-screenshots' || 'simulator-diagnostics' }}-${{ github.run_attempt }}
           path: |
             build/diagnostics
             build/Simulator.xcresult
