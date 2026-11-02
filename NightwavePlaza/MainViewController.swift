@@ -28,6 +28,8 @@ class MainViewController: UIViewController, UIScrollViewDelegate {
     private let sleepTimerService = SleepTimerService.shared
     private var cancellables = Set<AnyCancellable>()
     private var webViewNeedsReload = false
+    private var webViewReloadAttempts = 0
+    private let maxWebViewReloadAttempts = 2
        
     
     // MARK: - Lifecycle
@@ -165,11 +167,14 @@ extension MainViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         print("WebView: navigation committed")
     }
+    #endif
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        webViewReloadAttempts = 0
+        #if DEBUG
         print("WebView: navigation finished")
+        #endif
     }
-    #endif
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         print("WebViewError: Did Fail Navigation \(String(describing: navigation)), Error = \(error)");
@@ -177,6 +182,20 @@ extension MainViewController: WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         print("WebViewError: didFailProvisionalNavigation \(String(describing: navigation)), Error = \(error)");
+        retryWebViewAfterTimeout(error)
+    }
+
+    private func retryWebViewAfterTimeout(_ error: Error) {
+        let nsError = error as NSError
+        guard nsError.domain == NSURLErrorDomain,
+              nsError.code == NSURLErrorTimedOut,
+              webViewReloadAttempts < maxWebViewReloadAttempts else { return }
+
+        webViewReloadAttempts += 1
+        print("WebView: retrying bundled UI after timeout (\(webViewReloadAttempts)/\(maxWebViewReloadAttempts))")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.loadUrl()
+        }
     }
     
     // Sandboxes navigation to protect the core SPA environment

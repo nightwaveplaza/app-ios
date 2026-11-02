@@ -34,6 +34,11 @@ class LocalWebServer {
             guard !path.contains("..") else { return .notFound }
 
             let relativePath = path == "/" ? "/index.html" : path
+            #if DEBUG
+            if relativePath == "/index.html" {
+                print("Local server: index requested")
+            }
+            #endif
             let fullPath = publicDir + relativePath
             
             var isDir: ObjCBool = false
