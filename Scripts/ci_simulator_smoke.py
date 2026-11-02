@@ -33,7 +33,8 @@ def boot_simulator(name, udid, log_path):
     boot_status = log_path.read_text()
     if "Data Migration Failed" in boot_status:
         raise SimulatorMigrationError(f"{name}: simulator data migration failed; see {log_path}")
-    if not any(line.strip() == "Finished" for line in boot_status.splitlines()):
+    finished = any(line.strip() == "Finished" for line in boot_status.splitlines())
+    if not finished and "Device already booted" not in boot_status:
         raise RuntimeError(f"{name}: simulator boot did not report Finished; see {log_path}")
 
 

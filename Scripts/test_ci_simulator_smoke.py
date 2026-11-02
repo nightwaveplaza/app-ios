@@ -45,6 +45,18 @@ class SimulatorSmokeTests(unittest.TestCase):
                 self.assertEqual(commands, [("boot", "device-id"), ("bootstatus", "device-id", "-b")])
                 self.assertEqual(simctl.call_args.kwargs["timeout"], 600)
 
+    def test_already_booted_device_does_not_need_finished_status(self):
+        def simctl_result(*args, **kwargs):
+            if args[0] == "boot":
+                kwargs["stdout"].write("Device already booted, nothing to do.\n")
+            return subprocess.CompletedProcess(args, 0)
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "boot.log"
+            with patch.object(smoke, "simctl", side_effect=simctl_result):
+                smoke.boot_simulator("iPhone", "device-id", path)
+            self.assertIn("Device already booted", path.read_text())
+
     def test_boot_timeout_retains_output_and_cause(self):
         error = subprocess.TimeoutExpired(["xcrun", "simctl", "bootstatus"], 600)
 
