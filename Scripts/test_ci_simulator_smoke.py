@@ -172,6 +172,15 @@ class SimulatorSmokeTests(unittest.TestCase):
             ("shutdown", "device-id"), ("delete", "device-id"),
         ])
 
+    def test_duo_screenshots_use_both_displays(self):
+        with patch.object(smoke, "simctl") as simctl:
+            smoke.capture_screenshot("iPhone Duo", "device-id", Path("Duo.png"), timeout=30)
+        self.assertEqual([command.args for command in simctl.call_args_list], [
+            ("io", "device-id", "screenshot", "--display=1", "Duo-small.png"),
+            ("io", "device-id", "screenshot", "--display=3", "Duo-large.png"),
+        ])
+        self.assertTrue(all(command.kwargs["timeout"] == 30 for command in simctl.call_args_list))
+
     def test_success_requires_handshake_and_screenshot_on_both_devices(self):
         process = Mock()
         process.poll.return_value = None
@@ -194,8 +203,19 @@ class SimulatorSmokeTests(unittest.TestCase):
             for name in self.names:
                 self.assertIn(("create", f"Nightwave Plaza smoke - {name}", f"type-{name}", self.runtime_id), commands)
                 self.assertIn(("install", f"fresh-{name}", "build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app"), commands)
-                self.assertIn(("io", f"fresh-{name}", "screenshot", f"build/diagnostics/{name}.png"), commands)
                 self.assertIn(f"{name}: native launch and web bridge handshake passed", output.getvalue())
+            self.assertIn(
+                ("io", "fresh-iPhone Duo", "screenshot", "--display=1", "build/diagnostics/iPhone Duo-small.png"),
+                commands,
+            )
+            self.assertIn(
+                ("io", "fresh-iPhone Duo", "screenshot", "--display=3", "build/diagnostics/iPhone Duo-large.png"),
+                commands,
+            )
+            self.assertIn(
+                ("io", "fresh-iPhone 18 Pro", "screenshot", "build/diagnostics/iPhone 18 Pro.png"),
+                commands,
+            )
             self.assertFalse(any("stale-" in str(command) for command in commands))
             self.assertEqual(cleanup.call_count, 2)
 

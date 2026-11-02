@@ -65,9 +65,17 @@ def wait_for_handshake(name, process, log_path):
     raise RuntimeError(f"{name}: no web bridge handshake within {HANDSHAKE_TIMEOUT} seconds")
 
 
+def capture_screenshot(name, udid, path, timeout):
+    displays = (("small", 1), ("large", 3)) if name == "iPhone Duo" else ((None, None),)
+    for suffix, display_id in displays:
+        screenshot_path = path if suffix is None else path.with_name(f"{path.stem}-{suffix}{path.suffix}")
+        display_args = [] if display_id is None else [f"--display={display_id}"]
+        simctl("io", udid, "screenshot", *display_args, str(screenshot_path), timeout=timeout)
+
+
 def collect_diagnostics(name, udid, diagnostics):
     try:
-        simctl("io", udid, "screenshot", str(diagnostics / f"{name}-failure.png"), timeout=60)
+        capture_screenshot(name, udid, diagnostics / f"{name}-failure.png", timeout=60)
     except (OSError, subprocess.SubprocessError) as error:
         print(f"Warning: could not capture failure screenshot: {error}", flush=True)
     commands = (
@@ -157,7 +165,7 @@ def main():
                     stderr=subprocess.STDOUT,
                 )
                 wait_for_handshake(name, process, log_path)
-                simctl("io", udid, "screenshot", str(diagnostics / f"{name}.png"), timeout=30)
+                capture_screenshot(name, udid, diagnostics / f"{name}.png", timeout=30)
                 print(f"{name}: native launch and web bridge handshake passed", flush=True)
         except Exception:
             collect_diagnostics(name, udid, diagnostics)
