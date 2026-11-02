@@ -35,3 +35,10 @@ Leave the value empty if you don't need Sentry.
 - On launch the app starts a local server on `127.0.0.1:8080` and loads it in a WKWebView.
 - The web UI talks to the native side through a JS bridge: playback control, backgrounds, sleep timer, theme color and language.
 - Song metadata comes from ID3 tags in the HLS stream, then the app fetches song details from the Plaza API for the lock screen.
+
+## Comments
+
+- Comment only non-obvious logic — do not comment self-explanatory code.
+- Write brief, plain English comments without flowery language.
+- Start comments with a capital letter and omit trailing periods.
+- Describe the code as it is now (e.g., `// Done this way because...`), never the editing history or diff (`// Changed A to B...`).
