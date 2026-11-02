@@ -19,13 +19,16 @@ jobs:
   simulator:
     name: Build and launch on iOS 27
     runs-on: xcode-27
-    timeout-minutes: 35
+    timeout-minutes: 45
     outputs:
       web_ui_artifact_id: ${{ steps.web_ui.outputs.artifact-id }}
     env:
       DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
       - name: Test simulator smoke script
         run: python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
       - name: Prepare web UI and configuration
@@ -35,6 +38,13 @@ jobs:
           mkdir -p build/diagnostics
           ditto -c -k NightwavePlaza/WebApp build/web-ui.zip
           xcodebuild -version
+      - name: Prepare simulator runtime
+        timeout-minutes: 10
+        run: |
+          set -o pipefail
+          sudo xcode-select --switch "$DEVELOPER_DIR"
+          sudo xcodebuild -runFirstLaunch 2>&1 | tee build/diagnostics/first-launch.log
+          xcrun simctl runtime dyld_shared_cache update --all 2>&1 | tee build/diagnostics/runtime-cache.log
       - name: Compile simulator app
         run: |
           set -o pipefail

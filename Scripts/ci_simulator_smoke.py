@@ -3,10 +3,12 @@
 import json
 from pathlib import Path
 import subprocess
+import sys
 import time
 
 
 BOOT_TIMEOUT = 600
+INSTALL_TIMEOUT = 300
 
 
 def simctl(*args, **kwargs):
@@ -22,8 +24,41 @@ def boot_simulator(name, udid, log_path):
         except subprocess.TimeoutExpired as error:
             raise RuntimeError(f"{name}: simulator boot timed out; see {log_path}") from error
     # Bootstatus can exit successfully after a failed data migration
-    if "Data Migration Failed" in log_path.read_text():
+    boot_status = log_path.read_text()
+    if "Data Migration Failed" in boot_status:
         raise RuntimeError(f"{name}: simulator data migration failed; see {log_path}")
+    if not any(line.strip() == "Finished" for line in boot_status.splitlines()):
+        raise RuntimeError(f"{name}: simulator boot did not report Finished; see {log_path}")
+
+
+def install_app(name, udid, app, log_path):
+    print(f"{name}: installing app (timeout {INSTALL_TIMEOUT} seconds)", flush=True)
+    started = time.monotonic()
+    with log_path.open("w") as log:
+        try:
+            simctl("install", udid, str(app), stdout=log, stderr=subprocess.STDOUT, timeout=INSTALL_TIMEOUT)
+        except subprocess.TimeoutExpired as error:
+            raise RuntimeError(f"{name}: app installation timed out; see {log_path}") from error
+    print(f"{name}: app installed in {time.monotonic() - started:.1f} seconds", flush=True)
+
+
+def collect_diagnostics(name, udid, diagnostics):
+    commands = (
+        ("state.json", ["xcrun", "simctl", "list", "devices", "--json"]),
+        ("processes.log", ["ps", "-axo", "pid,ppid,state,%cpu,%mem,etime,command"]),
+        ("system.log", [
+            "xcrun", "simctl", "spawn", udid, "log", "show", "--last", "5m", "--style", "compact",
+            "--predicate", 'process == "installd" OR process == "SpringBoard" OR process == "launchd_sim"',
+        ]),
+    )
+    for suffix, command in commands:
+        path = diagnostics / f"{name}-{suffix}"
+        print(f"{name}: collecting {path.name}", flush=True)
+        try:
+            with path.open("w") as log:
+                subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=False, timeout=20)
+        except (OSError, subprocess.TimeoutExpired) as error:
+            print(f"Warning: could not collect {path.name}: {error}", flush=True)
 
 
 def cleanup_simctl(*args, timeout):
@@ -54,6 +89,7 @@ def cleanup_simulator(udid, bundle_id, process):
 
 
 def main():
+    print(f"Smoke check interpreter: {sys.executable} ({sys.version.split()[0]})", flush=True)
     app = Path("build/DerivedData/Build/Products/Debug-iphonesimulator/Nightwave Plaza.app")
     diagnostics = Path("build/diagnostics")
     diagnostics.mkdir(parents=True, exist_ok=True)
@@ -82,10 +118,11 @@ def main():
             raise RuntimeError(f"{name}: simulator creation returned no UDID")
         log_path = diagnostics / f"{name}.log"
         boot_log_path = diagnostics / f"{name}-boot.log"
+        install_log_path = diagnostics / f"{name}-install.log"
         process = None
         try:
             boot_simulator(name, udid, boot_log_path)
-            simctl("install", udid, str(app), timeout=60)
+            install_app(name, udid, app, install_log_path)
             with log_path.open("w") as log:
                 process = subprocess.Popen(
                     ["xcrun", "simctl", "launch", "--console-pty", "--terminate-running-process", udid, bundle_id],
@@ -106,9 +143,12 @@ def main():
                     raise RuntimeError(f"{name}: no web bridge handshake within 90 seconds")
                 simctl("io", udid, "screenshot", str(diagnostics / f"{name}.png"), timeout=30)
                 print(f"{name}: native launch and web bridge handshake passed", flush=True)
+        except Exception:
+            collect_diagnostics(name, udid, diagnostics)
+            raise
         finally:
             cleanup_simulator(udid, bundle_id, process)
-            for path in (boot_log_path, log_path):
+            for path in (boot_log_path, install_log_path, log_path):
                 if path.exists():
                     print(f"--- {path.name} ---\n{path.read_text()}", flush=True)
 
