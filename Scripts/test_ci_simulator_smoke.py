@@ -61,7 +61,7 @@ class SimulatorSmokeTests(unittest.TestCase):
             self.assertIs(raised.exception.__cause__, error)
             self.assertIn("Waiting on system app", path.read_text())
 
-    def test_zero_exit_with_migration_failure_prevents_install(self):
+    def test_persistent_migration_failure_recreates_device_then_fails(self):
         def simctl_result(*args, **kwargs):
             if args[0] == "bootstatus":
                 kwargs["stdout"].write("Status=3, isTerminal=YES\n\tData Migration Failed\n")
@@ -71,16 +71,62 @@ class SimulatorSmokeTests(unittest.TestCase):
             with (
                 patch.object(smoke, "simctl", side_effect=simctl_result) as simctl,
                 patch.object(smoke, "cleanup_simulator") as cleanup,
-                patch.object(smoke, "collect_diagnostics"),
+                patch.object(smoke, "collect_diagnostics") as diagnostics,
                 patch.object(smoke.subprocess, "Popen") as launch,
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 with self.assertRaisesRegex(RuntimeError, "simulator data migration failed"):
                     smoke.main()
+            commands = [call.args for call in simctl.call_args_list]
+            create = ("create", "Nightwave Plaza smoke - iPhone Duo", "type-iPhone Duo", self.runtime_id)
+            self.assertEqual(commands.count(create), smoke.BOOT_ATTEMPTS)
             self.assertNotIn("install", [call.args[0] for call in simctl.call_args_list])
             launch.assert_not_called()
-            cleanup.assert_called_once_with("fresh-iPhone Duo", "com.nightwaveplaza.NightwavePlaza", None)
-            self.assertIn("Data Migration Failed", Path("build/diagnostics/iPhone Duo-boot.log").read_text())
+            diagnostics.assert_called_once()
+            self.assertEqual(cleanup.call_count, smoke.BOOT_ATTEMPTS)
+            for attempt in range(1, smoke.BOOT_ATTEMPTS + 1):
+                log = Path(f"build/diagnostics/iPhone Duo-boot-attempt-{attempt}.log").read_text()
+                self.assertIn("Data Migration Failed", log)
+
+    def test_migration_failure_recreates_device_and_recovers(self):
+        boot_count = 0
+
+        def simctl_result(*args, **kwargs):
+            nonlocal boot_count
+            if args[0] == "bootstatus":
+                boot_count += 1
+                if boot_count == 1:
+                    kwargs["stdout"].write("Status=3, isTerminal=YES\n\tData Migration Failed\n")
+                else:
+                    kwargs["stdout"].write("Status=4294967295, isTerminal=YES\n\tFinished\n")
+            return self.simctl_result(*args, **kwargs)
+
+        process = Mock()
+        process.poll.return_value = None
+
+        def launch(*args, **kwargs):
+            kwargs["stdout"].write("Vue App is ready!\n")
+            kwargs["stdout"].flush()
+            return process
+
+        with tempfile.TemporaryDirectory() as directory, contextlib.chdir(directory):
+            with (
+                patch.object(smoke, "simctl", side_effect=simctl_result) as simctl,
+                patch.object(smoke.subprocess, "Popen", side_effect=launch),
+                patch.object(smoke, "cleanup_simulator") as cleanup,
+                patch.object(smoke, "collect_diagnostics") as diagnostics,
+                patch.object(smoke.time, "sleep"),
+                contextlib.redirect_stdout(io.StringIO()) as output,
+            ):
+                smoke.main()
+            commands = [call.args for call in simctl.call_args_list]
+            create = ("create", "Nightwave Plaza smoke - iPhone Duo", "type-iPhone Duo", self.runtime_id)
+            self.assertEqual(commands.count(create), 2)
+            self.assertIn("install", [call.args[0] for call in simctl.call_args_list])
+            self.assertIn("iPhone Duo: recreating simulator after data migration failure", output.getvalue())
+            self.assertIn("iPhone Duo: native launch and web bridge handshake passed", output.getvalue())
+            diagnostics.assert_not_called()
+            self.assertEqual(cleanup.call_count, 3)
 
     def test_incomplete_boot_prevents_install(self):
         def simctl_result(*args, **kwargs):

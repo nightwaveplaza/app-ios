@@ -8,12 +8,17 @@ import time
 
 
 BOOT_TIMEOUT = 600
+BOOT_ATTEMPTS = 2
 INSTALL_TIMEOUT = 300
 HANDSHAKE_TIMEOUT = 300
 
 
 def simctl(*args, **kwargs):
     return subprocess.run(["xcrun", "simctl", *args], check=True, **kwargs)
+
+
+class SimulatorMigrationError(RuntimeError):
+    pass
 
 
 def boot_simulator(name, udid, log_path):
@@ -27,7 +32,7 @@ def boot_simulator(name, udid, log_path):
     # Bootstatus can exit successfully after a failed data migration
     boot_status = log_path.read_text()
     if "Data Migration Failed" in boot_status:
-        raise RuntimeError(f"{name}: simulator data migration failed; see {log_path}")
+        raise SimulatorMigrationError(f"{name}: simulator data migration failed; see {log_path}")
     if not any(line.strip() == "Finished" for line in boot_status.splitlines()):
         raise RuntimeError(f"{name}: simulator boot did not report Finished; see {log_path}")
 
@@ -144,37 +149,45 @@ def main():
     for name in ("iPhone Duo", "iPhone 18 Pro"):
         if name not in device_types:
             raise RuntimeError(f"Required simulator device type missing: {name}")
-        print(f"{name}: creating a clean simulator with {runtime['identifier']}", flush=True)
-        udid = simctl(
-            "create", f"Nightwave Plaza smoke - {name}", device_types[name], runtime["identifier"],
-            capture_output=True, text=True, timeout=60,
-        ).stdout.strip()
-        if not udid:
-            raise RuntimeError(f"{name}: simulator creation returned no UDID")
-        log_path = diagnostics / f"{name}.log"
-        boot_log_path = diagnostics / f"{name}-boot.log"
-        install_log_path = diagnostics / f"{name}-install.log"
-        process = None
-        try:
-            boot_simulator(name, udid, boot_log_path)
-            install_app(name, udid, app, install_log_path)
-            with log_path.open("w") as log:
-                process = subprocess.Popen(
-                    ["xcrun", "simctl", "launch", "--console-pty", "--terminate-running-process", udid, bundle_id],
-                    stdout=log,
-                    stderr=subprocess.STDOUT,
-                )
-                wait_for_handshake(name, process, log_path)
-                capture_screenshot(name, udid, diagnostics / f"{name}.png", timeout=30)
-                print(f"{name}: native launch and web bridge handshake passed", flush=True)
-        except Exception:
-            collect_diagnostics(name, udid, diagnostics)
-            raise
-        finally:
-            cleanup_simulator(udid, bundle_id, process)
-            for path in (boot_log_path, install_log_path, log_path):
-                if path.exists():
-                    print(f"--- {path.name} ---\n{path.read_text()}", flush=True)
+        for attempt in range(1, BOOT_ATTEMPTS + 1):
+            print(f"{name}: creating a clean simulator with {runtime['identifier']}", flush=True)
+            udid = simctl(
+                "create", f"Nightwave Plaza smoke - {name}", device_types[name], runtime["identifier"],
+                capture_output=True, text=True, timeout=60,
+            ).stdout.strip()
+            if not udid:
+                raise RuntimeError(f"{name}: simulator creation returned no UDID")
+            log_path = diagnostics / f"{name}-attempt-{attempt}.log"
+            boot_log_path = diagnostics / f"{name}-boot-attempt-{attempt}.log"
+            install_log_path = diagnostics / f"{name}-install-attempt-{attempt}.log"
+            process = None
+            try:
+                boot_simulator(name, udid, boot_log_path)
+                install_app(name, udid, app, install_log_path)
+                with log_path.open("w") as log:
+                    process = subprocess.Popen(
+                        ["xcrun", "simctl", "launch", "--console-pty", "--terminate-running-process", udid, bundle_id],
+                        stdout=log,
+                        stderr=subprocess.STDOUT,
+                    )
+                    wait_for_handshake(name, process, log_path)
+                    capture_screenshot(name, udid, diagnostics / f"{name}.png", timeout=30)
+                    print(f"{name}: native launch and web bridge handshake passed", flush=True)
+            except SimulatorMigrationError:
+                if attempt == BOOT_ATTEMPTS:
+                    collect_diagnostics(name, udid, diagnostics)
+                    raise
+                print(f"{name}: recreating simulator after data migration failure", flush=True)
+            except Exception:
+                collect_diagnostics(name, udid, diagnostics)
+                raise
+            else:
+                break
+            finally:
+                cleanup_simulator(udid, bundle_id, process)
+                for path in (boot_log_path, install_log_path, log_path):
+                    if path.exists():
+                        print(f"--- {path.name} ---\n{path.read_text()}", flush=True)
 
 
 if __name__ == "__main__":
