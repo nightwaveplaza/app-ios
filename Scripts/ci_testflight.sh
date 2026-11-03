@@ -17,9 +17,21 @@ SIGNING_DIR=$(mktemp -d "$RUNNER_TEMP/plaza-signing.XXXXXX")
 KEYCHAIN_PATH="$SIGNING_DIR/signing.keychain-db"
 KEYCHAIN_PASSWORD=$(openssl rand -hex 32)
 PROFILE_PATH=""
+LEGACY_PROFILE_PATH=""
 cleanup() {
+    # Record disappearing profiles before removing our own copies on exit
+    if [ -n "$PROFILE_PATH" ] && [ -f build/signing.log ]; then
+        for installed_profile in "$PROFILE_PATH" "$LEGACY_PROFILE_PATH"; do
+            if [ -f "$installed_profile" ]; then
+                printf 'Profile present at cleanup: %s\n' "$installed_profile" >> build/signing.log
+            else
+                printf 'Profile missing before cleanup: %s\n' "$installed_profile" >> build/signing.log
+            fi
+        done
+    fi
     security delete-keychain "$KEYCHAIN_PATH" >/dev/null 2>&1 || true
     if [ -n "$PROFILE_PATH" ]; then rm -f "$PROFILE_PATH"; fi
+    if [ -n "$LEGACY_PROFILE_PATH" ]; then rm -f "$LEGACY_PROFILE_PATH"; fi
     rm -rf "$SIGNING_DIR"
 }
 trap cleanup EXIT
@@ -42,34 +54,6 @@ for variable, filename in (
 PY
 
 security cms -D -i "$SIGNING_DIR/profile.mobileprovision" > "$SIGNING_DIR/profile.plist"
-PROFILE_UUID=$(python3 - <<'PY'
-import datetime
-import os
-from pathlib import Path
-import plistlib
-import uuid
-
-profile = plistlib.loads((Path(os.environ["SIGNING_DIR"]) / "profile.plist").read_bytes())
-team = os.environ["APPLE_TEAM_ID"]
-entitlements = profile["Entitlements"]
-if team not in profile["TeamIdentifier"]:
-    raise SystemExit("Provisioning profile belongs to a different Apple team.")
-expected_app_ids = {f'{prefix}.{os.environ["BUNDLE_ID"]}' for prefix in profile["ApplicationIdentifierPrefix"]}
-if entitlements.get("application-identifier") not in expected_app_ids:
-    raise SystemExit("Provisioning profile does not match the app's bundle identifier.")
-if entitlements.get("get-task-allow") or profile.get("ProvisionedDevices") or profile.get("ProvisionsAllDevices"):
-    raise SystemExit("An App Store Connect distribution profile is required.")
-if profile["ExpirationDate"] <= datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None):
-    raise SystemExit("Provisioning profile has expired.")
-print(str(uuid.UUID(profile["UUID"])).upper())
-PY
-)
-export PROFILE_UUID
-PROFILE_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
-mkdir -p "$PROFILE_DIR"
-PROFILE_PATH="$PROFILE_DIR/$PROFILE_UUID.mobileprovision"
-cp "$SIGNING_DIR/profile.mobileprovision" "$PROFILE_PATH"
-
 security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 security set-keychain-settings -lut 7200 "$KEYCHAIN_PATH"
 security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
@@ -84,6 +68,27 @@ security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
 security list-keychains -d user -s "$KEYCHAIN_PATH" "$HOME/Library/Keychains/login.keychain-db"
 
 mkdir -p build
+security find-identity -v -p codesigning "$KEYCHAIN_PATH" > "$SIGNING_DIR/identities.txt"
+PROFILE_UUID=$(python3 Scripts/validate_signing_profile.py 2> build/signing.log) || {
+    cat build/signing.log >&2
+    exit 1
+}
+cat build/signing.log
+export PROFILE_UUID
+
+# Install for both Xcode's managed store and the command-line profile search path
+PROFILE_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+LEGACY_PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+mkdir -p "$PROFILE_DIR" "$LEGACY_PROFILE_DIR"
+PROFILE_PATH="$PROFILE_DIR/$PROFILE_UUID.mobileprovision"
+LEGACY_PROFILE_PATH="$LEGACY_PROFILE_DIR/$PROFILE_UUID.mobileprovision"
+cp "$SIGNING_DIR/profile.mobileprovision" "$PROFILE_PATH"
+cp "$SIGNING_DIR/profile.mobileprovision" "$LEGACY_PROFILE_PATH"
+for installed_profile in "$PROFILE_PATH" "$LEGACY_PROFILE_PATH"; do
+    cmp "$SIGNING_DIR/profile.mobileprovision" "$installed_profile"
+    printf 'Installed profile: %s\n' "$installed_profile" | tee -a build/signing.log
+done
+
 xcodebuild -project NightwavePlaza.xcodeproj -scheme NightwavePlaza \
     -configuration Release -destination 'generic/platform=iOS' \
     -archivePath build/NightwavePlaza.xcarchive -resultBundlePath build/Archive.xcresult \

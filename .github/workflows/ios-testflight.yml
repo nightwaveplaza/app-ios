@@ -34,8 +34,8 @@ jobs:
           xcodebuild -version
           printf 'SENTRY_DSN =\n' > AppConfig.xcconfig
           bash Scripts/fetch_view.sh
-      - name: Test signing container compatibility
-        run: python3 -m unittest discover -s Scripts -p 'test_prepare_signing_p12.py' -v
+      - name: Test signing preparation
+        run: python3 -m unittest discover -s Scripts -p 'test_*signing*.py' -v
       - name: Sign, archive, and upload
         env:
           APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
@@ -56,5 +56,6 @@ jobs:
             build/Archive.xcresult
             build/archive.log
             build/upload.log
+            build/signing.log
             build/NightwavePlaza.xcarchive/dSYMs
           retention-days: 14

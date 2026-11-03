@@ -69,6 +69,14 @@ The intermediate private key remains encrypted; temporary files are removed on
 exit. The original GitHub secrets do not need conversion. An OpenSSL verification
 failure is reported separately from a Keychain import failure.
 
+Signing preflight checks the profile's iOS platform, team, bundle ID, distribution
+type, expiration and certificate fingerprints against valid code-signing identities
+in the temporary Keychain. The profile's UUID is preserved as issued. CI installs
+it in both `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and
+`~/Library/MobileDevice/Provisioning Profiles`, verifies the copies and removes
+them on exit. `signing.log` records validation and profile locations without private
+keys or the full profile; it also records whether the copies survived until cleanup.
+
 The optional `build_number` input overrides the generated build number
 (`1000 + github.run_number`, followed by the run attempt). Overrides must exceed
 previous TestFlight builds; after a large manual override, subsequent runs may
