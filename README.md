@@ -49,8 +49,15 @@ currently iOS 27.1 for Duo and iOS 27.0 for 18 Pro. A missing compatible runtime
 fails explicitly; a different phone is never substituted.
 
 Download `screenshots-<device>-<attempt>` from the smoke run's artifacts: Duo has
-`small` and `large` PNGs (displays 1 and 3); 18 Pro has one PNG. Failure captures
-have a `-failure` suffix. `simulator-diagnostics-<device>-<attempt>` includes the
+`small` and `large` PNGs; 18 Pro has one PNG. Duo is folded before `small` and
+unfolded before `large`, with the active display verified before capture. CI uses
+[duoctl](https://github.com/skarol/duoctl) pinned to commit
+`c6ff3e961a9858fb061907448e702d7d1617dc4a` to animate the hinge; this relies on
+private simulator interfaces and is confined to CI, not the app. Pose state is
+saved in `*.pose.log`. Black/transparent frames are retried for up to 30 seconds;
+a persistently blank frame fails the job. This pixel check does not prove the UI
+is correct. Failure captures have a `-failure` suffix and preserve the current
+pose without attempting to fold the device. `simulator-diagnostics-<device>-<attempt>` includes the
 runtime inventory, boot/install/app logs and build result. Distribution logs and
 dSYMs are in `testflight-diagnostics-<attempt>`.
 
@@ -85,6 +92,7 @@ also need an override. CI creates an empty `SENTRY_DSN` configuration.
 Local smoke-script regression checks (Python 3.11+):
 
 ```sh
+python3 -m pip install -r Scripts/requirements-ci.txt
 python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
 ```
 

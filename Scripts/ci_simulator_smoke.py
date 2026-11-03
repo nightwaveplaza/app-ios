@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -72,15 +73,52 @@ def wait_for_handshake(name, process, log_path):
     raise RuntimeError(f"{name}: no web bridge handshake within {HANDSHAKE_TIMEOUT} seconds")
 
 
-def capture_screenshot(name, udid, path, timeout):
+def set_duo_pose(udid, pose, log_path):
+    command = [os.environ.get("DUOCTL_PATH", "duoctl"), "-d", udid, pose, "--duration", "1.5"]
+    with log_path.open("w") as log:
+        subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True, timeout=120)
+    state = json.loads(log_path.read_text())
+    expected = "cover" if pose == "close" else "inner"
+    if state.get("activeScreen") != expected:
+        raise RuntimeError(f"Duo {pose}: expected active {expected} screen; see {log_path}")
+    time.sleep(2)
+    return state["displayId"]
+
+
+def screenshot_has_content(path):
+    from PIL import Image
+
+    with Image.open(path) as source:
+        rgba = source.convert("RGBA")
+        visible = Image.new("RGBA", rgba.size, (0, 0, 0, 255))
+        visible.alpha_composite(rgba)
+        return any(high > 8 for low, high in visible.convert("RGB").getextrema())
+
+
+def capture_frame(udid, display_id, path, timeout, validate=True):
+    display_args = [] if display_id is None else [f"--display={display_id}"]
+    deadline = time.monotonic() + timeout
+    while True:
+        remaining = max(1, deadline - time.monotonic())
+        simctl("io", udid, "screenshot", *display_args, str(path), timeout=remaining)
+        if not validate or screenshot_has_content(path):
+            return
+        if time.monotonic() >= deadline:
+            raise RuntimeError(f"Screenshot remains black or transparent: {path}")
+        time.sleep(1)
+
+
+def capture_screenshot(name, udid, path, timeout, diagnostic=False):
     displays = (("small", 1), ("large", 3)) if name == "iPhone Duo" else ((None, None),)
     failure = None
     for suffix, display_id in displays:
         screenshot_path = path if suffix is None else path.with_name(f"{path.stem}-{suffix}{path.suffix}")
-        display_args = [] if display_id is None else [f"--display={display_id}"]
         try:
-            simctl("io", udid, "screenshot", *display_args, str(screenshot_path), timeout=timeout)
-        except (OSError, subprocess.SubprocessError) as error:
+            if name == "iPhone Duo" and not diagnostic:
+                pose = "close" if suffix == "small" else "open"
+                display_id = set_duo_pose(udid, pose, screenshot_path.with_suffix(".pose.log"))
+            capture_frame(udid, display_id, screenshot_path, timeout, validate=not diagnostic)
+        except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, KeyError) as error:
             print(f"Warning: could not capture {screenshot_path}: {error}", flush=True)
             if failure is None:
                 failure = error
@@ -91,8 +129,8 @@ def capture_screenshot(name, udid, path, timeout):
 def collect_diagnostics(name, udid, diagnostics, screenshots=False):
     if screenshots:
         try:
-            capture_screenshot(name, udid, diagnostics / f"{name}-failure.png", timeout=60)
-        except (OSError, subprocess.SubprocessError):
+            capture_screenshot(name, udid, diagnostics / f"{name}-failure.png", timeout=60, diagnostic=True)
+        except (OSError, subprocess.SubprocessError, RuntimeError, ValueError, KeyError):
             pass
     commands = (
         ("state.json", ["xcrun", "simctl", "list", "devices", "--json"]),

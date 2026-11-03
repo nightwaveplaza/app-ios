@@ -26,6 +26,16 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
+      - name: Check out Duo simulator controls
+        if: matrix.device == 'iPhone Duo'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: skarol/duoctl
+          ref: c6ff3e961a9858fb061907448e702d7d1617dc4a # v0.2.1 with animated screen switching
+          path: build/tools/duoctl
+          persist-credentials: false
+      - name: Install screenshot validation dependency
+        run: python3 -m pip install -r Scripts/requirements-ci.txt
       - name: Test simulator smoke script
         run: python3 -m unittest discover -s Scripts -p 'test_ci_simulator_smoke.py' -v
       - name: Prepare web UI and configuration
@@ -53,6 +63,7 @@ jobs:
       - name: Smoke test and capture screenshots
         env:
           SIMULATOR_DEVICE: ${{ matrix.device }}
+          DUOCTL_PATH: ${{ github.workspace }}/build/tools/duoctl/bin/duoctl
         run: python3 Scripts/ci_simulator_smoke.py --device "$SIMULATOR_DEVICE" --screenshots
       - name: Save screenshots
         if: always()

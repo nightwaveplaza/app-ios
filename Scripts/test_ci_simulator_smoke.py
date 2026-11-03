@@ -266,13 +266,18 @@ class SimulatorSmokeTests(unittest.TestCase):
         ])
 
     def test_duo_screenshots_use_both_displays(self):
-        with patch.object(smoke, "simctl") as simctl:
+        with (
+            patch.object(smoke, "simctl") as simctl,
+            patch.object(smoke, "set_duo_pose", side_effect=[1, 3]) as pose,
+            patch.object(smoke, "screenshot_has_content", return_value=True),
+        ):
             smoke.capture_screenshot("iPhone Duo", "device-id", Path("Duo.png"), timeout=30)
         self.assertEqual([command.args for command in simctl.call_args_list], [
             ("io", "device-id", "screenshot", "--display=1", "Duo-small.png"),
             ("io", "device-id", "screenshot", "--display=3", "Duo-large.png"),
         ])
-        self.assertTrue(all(command.kwargs["timeout"] == 30 for command in simctl.call_args_list))
+        self.assertEqual([call.args[1] for call in pose.call_args_list], ["close", "open"])
+        self.assertTrue(all(0 < command.kwargs["timeout"] <= 30 for command in simctl.call_args_list))
 
     def test_screenshot_timeout_does_not_skip_other_display(self):
         def simctl_result(*args, **kwargs):
@@ -282,6 +287,8 @@ class SimulatorSmokeTests(unittest.TestCase):
 
         with (
             patch.object(smoke, "simctl", side_effect=simctl_result) as simctl,
+            patch.object(smoke, "set_duo_pose", side_effect=[1, 3]),
+            patch.object(smoke, "screenshot_has_content", return_value=True),
             contextlib.redirect_stdout(io.StringIO()) as output,
         ):
             with self.assertRaises(subprocess.TimeoutExpired):
@@ -306,6 +313,8 @@ class SimulatorSmokeTests(unittest.TestCase):
                 patch.object(smoke, "simctl", side_effect=self.simctl_result) as simctl,
                 patch.object(smoke.subprocess, "Popen", side_effect=launch),
                 patch.object(smoke, "cleanup_simulator") as cleanup,
+                patch.object(smoke, "set_duo_pose", side_effect=[1, 3]),
+                patch.object(smoke, "screenshot_has_content", return_value=True),
                 patch.object(smoke.time, "sleep"),
                 contextlib.redirect_stdout(io.StringIO()) as output,
             ):
@@ -349,6 +358,66 @@ class SimulatorSmokeTests(unittest.TestCase):
                     smoke.main()
             self.assertEqual([call.args[0] for call in simctl.call_args_list], ["list"])
             cleanup.assert_not_called()
+
+
+
+class ScreenshotContentTests(unittest.TestCase):
+    def test_black_and_transparent_frames_are_rejected(self):
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "frame.png"
+            for color in ((0, 0, 0, 255), (255, 255, 255, 0), (4, 4, 4, 255)):
+                Image.new("RGBA", (16, 16), color).save(path)
+                self.assertFalse(smoke.screenshot_has_content(path))
+            picture = Image.new("RGB", (16, 16), "black")
+            picture.putpixel((8, 8), (255, 255, 255))
+            picture.save(path)
+            self.assertTrue(smoke.screenshot_has_content(path))
+
+    def test_black_frame_is_retried_until_content_arrives(self):
+        with (
+            patch.object(smoke, "simctl") as simctl,
+            patch.object(smoke, "screenshot_has_content", side_effect=[False, True]),
+            patch.object(smoke.time, "sleep"),
+        ):
+            smoke.capture_frame("device", 3, Path("large.png"), 30)
+        self.assertEqual(simctl.call_count, 2)
+
+    def test_permanently_black_frame_fails(self):
+        with (
+            patch.object(smoke, "simctl"),
+            patch.object(smoke, "screenshot_has_content", return_value=False),
+            patch.object(smoke.time, "monotonic", side_effect=[0, 0, 31]),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "remains black"):
+                smoke.capture_frame("device", 3, Path("large.png"), 30)
+
+    def test_pose_must_activate_expected_screen_before_capture(self):
+        def command(args, **kwargs):
+            kwargs["stdout"].write(json.dumps({"activeScreen": "inner", "displayId": 7}))
+
+        with tempfile.TemporaryDirectory() as directory:
+            with (
+                patch.object(smoke.subprocess, "run", side_effect=command) as run,
+                patch.object(smoke.time, "sleep"),
+            ):
+                display = smoke.set_duo_pose("device", "open", Path(directory) / "pose.log")
+                self.assertEqual(display, 7)
+                self.assertEqual(run.call_args.args[0][-4:], ["device", "open", "--duration", "1.5"])
+                with self.assertRaisesRegex(RuntimeError, "expected active cover"):
+                    smoke.set_duo_pose("device", "close", Path(directory) / "pose.log")
+
+    def test_diagnostics_do_not_move_hinge_or_validate_dark_frame(self):
+        with (
+            patch.object(smoke, "simctl") as simctl,
+            patch.object(smoke, "set_duo_pose") as pose,
+            patch.object(smoke, "screenshot_has_content") as validate,
+        ):
+            smoke.capture_screenshot("iPhone Duo", "device", Path("failure.png"), 30, diagnostic=True)
+        self.assertEqual(simctl.call_count, 2)
+        pose.assert_not_called()
+        validate.assert_not_called()
 
 
 class HandshakeTests(unittest.TestCase):
