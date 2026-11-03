@@ -73,7 +73,11 @@ cp "$SIGNING_DIR/profile.mobileprovision" "$PROFILE_PATH"
 security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 security set-keychain-settings -lut 7200 "$KEYCHAIN_PATH"
 security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
-security import "$SIGNING_DIR/distribution.p12" -P "$DISTRIBUTION_P12_PASSWORD" \
+# Normalize OpenSSL 3 exports before passing them to Apple's PKCS12 importer
+export P12_IMPORT_PASSWORD
+P12_IMPORT_PASSWORD=$(openssl rand -hex 32)
+bash Scripts/prepare_signing_p12.sh "$SIGNING_DIR/distribution.p12" "$SIGNING_DIR/keychain.p12"
+security import "$SIGNING_DIR/keychain.p12" -P "$P12_IMPORT_PASSWORD" \
     -k "$KEYCHAIN_PATH" -T /usr/bin/codesign -T /usr/bin/security >/dev/null
 security set-key-partition-list -S apple-tool:,apple:,codesign: -s \
     -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH" >/dev/null

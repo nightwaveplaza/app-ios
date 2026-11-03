@@ -63,6 +63,12 @@ The GitHub environment `testflight` must contain:
 - Secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY_BASE64` for the App Store
   Connect API key with permission to upload this app.
 
+Before Keychain import, CI verifies the source `.p12` with OpenSSL and repackages
+it with SHA-1/3DES PKCS12 algorithms for compatibility with Apple's importer.
+The intermediate private key remains encrypted; temporary files are removed on
+exit. The original GitHub secrets do not need conversion. An OpenSSL verification
+failure is reported separately from a Keychain import failure.
+
 The optional `build_number` input overrides the generated build number
 (`1000 + github.run_number`, followed by the run attempt). Overrides must exceed
 previous TestFlight builds; after a large manual override, subsequent runs may
